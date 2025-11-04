@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">ecooperativa</string>
+    <string name="app_name">E-Cooperativa</string>
+    <string moduleConfig="true" name="CodePushServerUrl">https://api.revopush.org</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">D2mhXp1-S92A5d_LC-Eo48bpIHSnVySQoieRbl</string>
 </resources>
