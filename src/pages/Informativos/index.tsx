@@ -1,10 +1,10 @@
 import Colors from '@colors';
-import CardInformativo, {ReciveProps} from '@components/CardInformativo';
-import Header from '@components/Header';
-import Loading from '@components/Loading';
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, FlatList, RefreshControl} from 'react-native';
-import {IAttachmentProps} from 'src/dtos/attachment';
+import CardInformativo, { ReciveProps } from '@components/CardInformativo';
+import Header from 'src/shared/components/Header';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, FlatList, RefreshControl } from 'react-native';
+import { IAttachmentProps } from 'src/dtos/attachment';
+import Loading from 'src/shared/components/Loading';
 import Toast from 'src/utils/toast';
 import api from '../../services/api';
 
@@ -79,7 +79,7 @@ const Informativos = () => {
       <ActivityIndicator
         size="large"
         color={Colors.primary.blue}
-        style={{marginTop: 32}}
+        style={{ marginTop: 32 }}
       />
     );
   }, [loading]);
@@ -110,7 +110,7 @@ const Informativos = () => {
           <FlatList
             data={data}
             ref={listRef}
-            renderItem={({item, index}) => renderItem(item, index)}
+            renderItem={({ item, index }) => renderItem(item, index)}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item, _) => item?._id?.toString()}
             refreshControl={
@@ -123,7 +123,7 @@ const Informativos = () => {
             onEndReached={() => loadRepositories()}
             onEndReachedThreshold={0.3}
             ListFooterComponent={() => renderFooter()}
-            style={{paddingTop: 16}}
+            style={{ paddingTop: 16 }}
           />
         </>
       )}

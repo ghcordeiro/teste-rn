@@ -28,6 +28,17 @@ export interface IModalTrackWithdrawalProps {
 
 const Tab = createMaterialTopTabNavigator();
 
+// Componentes nomeados para evitar warnings de componentes inline
+const TabItemsTrackWithdrawalWrapper = ({ route }: any) => {
+  const { data } = route.params || {};
+  return <TabItemsTrackWithdrawal data={data} />;
+};
+
+const TabAttachmentsTrackWithdrawalWrapper = ({ route }: any) => {
+  const { data, closeModal } = route.params || {};
+  return <TabAttachmentsTrackWithdrawal data={data} closeModal={closeModal} />;
+};
+
 const ModalTrackWithdrawal: React.ForwardRefRenderFunction<
   IModalTrackWithdrawalProps,
   any

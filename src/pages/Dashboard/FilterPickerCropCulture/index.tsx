@@ -1,6 +1,6 @@
 import { Picker } from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
-import Loading from 'src/components/Loading';
+import Loading from 'src/shared/components/Loading';
 import api from 'src/services/api';
 import { Container } from './styles';
 

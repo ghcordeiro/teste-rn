@@ -1,12 +1,12 @@
-import React from 'react';
-import { Row, TextLight, TextRegular } from '@globalStyle';
 import Colors from '@colors';
-import convertData from '@utils/convertData';
+import { Row, TextLight, TextRegular } from '@globalStyle';
 import convertAfterDot from '@utils/convertAfterDot';
+import convertData from '@utils/convertData';
+import React from 'react';
+import ProgressBar from 'src/shared/components/ProgressBar';
 import { IOrder } from '../../dtos/order';
-import ProgressBar from '../ProgressBar';
 
-import { Container, Header, Body, BodyGroupText } from './styles';
+import { Body, BodyGroupText, Container, Header } from './styles';
 
 interface ICardOrder {
   data: IOrder;
@@ -19,14 +19,15 @@ const CardOrder = ({ data }: ICardOrder) => {
         <Header>
           <TextLight
             size={16}
-            color={Colors.white}>{`Pedido ${data.code}`}</TextLight>
+            color={Colors.white}
+          >{`Pedido ${data.code}`}</TextLight>
           {data.expirationDate && (
             <TextLight size={16} color={Colors.white}>
               {convertData(
                 new Date(data.expirationDate).getTime(),
                 '/',
                 false,
-                'full'
+                'full',
               )}
             </TextLight>
           )}
@@ -38,7 +39,8 @@ const CardOrder = ({ data }: ICardOrder) => {
               <TextRegular
                 size={14}
                 textAlign="center"
-                numberOfLines={2}>{`${data.crop}`}</TextRegular>
+                numberOfLines={2}
+              >{`${data.crop}`}</TextRegular>
             </BodyGroupText>
             <BodyGroupText>
               <TextRegular size={12}>Pedido</TextRegular>
@@ -52,14 +54,14 @@ const CardOrder = ({ data }: ICardOrder) => {
               <TextRegular size={12}>Retirado</TextRegular>
               <TextRegular size={14}>{`${convertAfterDot(
                 data.quantity - data.balanceQuantity,
-                2
+                2,
               )} ${data.product.measurementUnit}`}</TextRegular>
             </BodyGroupText>
             <BodyGroupText>
               <TextRegular size={12}>Saldo</TextRegular>
               <TextRegular size={14}>{`${convertAfterDot(
                 data.balanceQuantity,
-                2
+                2,
               )} ${data.product.measurementUnit}`}</TextRegular>
             </BodyGroupText>
           </Row>

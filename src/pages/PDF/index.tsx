@@ -1,5 +1,5 @@
 import Colors from '@colors';
-import Header from '@components/Header';
+import Header from 'src/shared/components/Header';
 import { TextBold } from '@globalStyle';
 import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';

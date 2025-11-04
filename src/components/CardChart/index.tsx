@@ -7,7 +7,7 @@ import convertCurrency from '@utils/convertCurrency';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { ICardGraphData, ICardGraphProps } from 'src/dtos/graphics';
-import Loading from '../Loading';
+import Loading from 'src/shared/components/Loading';
 import { mountData } from './mountData';
 
 import { Container, Section } from './styles';

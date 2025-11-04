@@ -61,6 +61,9 @@
 		<string>Lato-Regular.ttf</string>
 		<string>Lato-Thin.ttf</string>
 		<string>Lato-ThinItalic.ttf</string>
+		<string>Feather.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>Ionicons.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

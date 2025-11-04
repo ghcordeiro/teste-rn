@@ -1,6 +1,5 @@
-import Loading from '@components/Loading';
 import Base64 from '@utils/Base64';
-import {AxiosHeaderValue, HeadersDefaults} from 'axios';
+import { AxiosHeaderValue, HeadersDefaults } from 'axios';
 import {
   PropsWithChildren,
   createContext,
@@ -10,7 +9,8 @@ import {
 } from 'react';
 import api from 'src/services/api';
 import StorageService from 'src/services/storage';
-import {useFirebase} from './FirebaseContext';
+import { Loading } from 'src/shared';
+import { useFirebase } from './FirebaseContext';
 
 export interface SignInCredentials {
   login?: string;
@@ -54,13 +54,13 @@ interface UserContextData {
 
 const User = createContext<UserContextData>({} as UserContextData);
 
-const AuthContext = ({children}: PropsWithChildren) => {
+const AuthContext = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User>();
   const [cooperado, setCooperado] = useState<string>();
   const [loading, setLoading] = useState(true);
   const [credentials, setCredentials] = useState<SignInCredentials>();
 
-  const {token} = useFirebase();
+  const { token } = useFirebase();
 
   const refreshSession = async () => {
     const r = await api.get('session/refresh');
@@ -169,7 +169,7 @@ const AuthContext = ({children}: PropsWithChildren) => {
     api.defaults.headers = {} as HeadersDefaults & {
       [key: string]: AxiosHeaderValue;
     };
-    const _usr: User = {...user} as User;
+    const _usr: User = { ...user } as User;
     _usr.token = undefined;
     setUser(_usr);
     await StorageService.removeStorage('producer');
@@ -188,7 +188,8 @@ const AuthContext = ({children}: PropsWithChildren) => {
         removerProducer,
         changePassword,
         refreshSession,
-      }}>
+      }}
+    >
       {loading ? <Loading /> : children}
     </User.Provider>
   );
@@ -204,4 +205,4 @@ function useAuth(): UserContextData {
   return context;
 }
 
-export {AuthContext, useAuth};
+export { AuthContext, useAuth };

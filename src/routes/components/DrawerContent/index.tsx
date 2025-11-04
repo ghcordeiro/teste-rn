@@ -11,6 +11,7 @@ import { Alert } from 'react-native';
 import FontAwesome from '@react-native-vector-icons/fontawesome';
 import { useServer } from 'src/hooks/ServerContext';
 import { useAuth } from 'src/hooks/UserContext';
+import { navigationRef } from 'src/services/navigation';
 import {
   Container,
   DrawerContentView,
@@ -31,20 +32,28 @@ interface DrawerMenuItem {
 
 /**
  * Helper para navegar para telas de notificação através da hierarquia
- * Drawer → Stack → Tabs → Screen
+ * Drawer → Stack (Initial) → Stack (App) → Tabs → Screen
+ * 
+ * Usa navigationRef global para acessar a hierarquia completa de navegação
  */
 const navigateToNotificationScreen = (
   navigation: DrawerContentComponentProps['navigation'],
   screen: string,
   type: EFirebaseNotificationType,
 ) => {
-  navigation.navigate('App', {
-    screen,
-    params: {
-      key: `Notificações-${type}-${Date.now()}`,
-      type,
-    },
-  });
+  // Fecha o drawer primeiro
+  navigation.closeDrawer();
+  
+  // Usa navigationRef para navegar através da hierarquia completa
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('App' as never, {
+      screen,
+      params: {
+        key: `Notificações-${type}-${Date.now()}`,
+        type,
+      },
+    } as never);
+  }
 };
 
 const DrawerContent = (props: DrawerContentComponentProps) => {

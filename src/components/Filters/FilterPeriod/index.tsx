@@ -1,11 +1,11 @@
 import Colors from '@colors';
 import { TextBold } from '@globalStyle';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import { translate } from '@translate';
 import React from 'react';
 import { Platform, TouchableOpacity, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { Icon } from 'src/components/Button/styles';
 import { DateFilterOption, useDateFilter } from 'src/shared';
 import {
   Button,
@@ -116,7 +116,7 @@ const FilterPeriod = ({ onHandleFilters }: IFilters) => {
           selected={selectedOption === DateFilterOption.CUSTOM}
           onPress={openCalendar}
         >
-          <Icon
+          <FontAwesome
             name="calendar"
             color={
               selectedOption === DateFilterOption.CUSTOM

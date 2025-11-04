@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import Colors from '@colors';
 import InputMask, { InputRef } from '@components/InputMask';
-import Select from '@components/Select';
 import { Version } from '@components/Version';
 import { IServerConfig } from '@dtos/server';
 import { CenteredFlex } from '@globalStyle';
@@ -13,6 +12,7 @@ import { Alert, Platform, SafeAreaView, View } from 'react-native';
 import { useServer } from 'src/hooks/ServerContext';
 import { useAuth } from 'src/hooks/UserContext';
 import Button from 'src/shared/components/Button';
+import Select from 'src/shared/components/Select';
 import Toast from 'src/utils/toast';
 import ECoop from '../../assets/images/ECoop/e-coop_logo-01.svg';
 import { Container, Scroll } from './styles';

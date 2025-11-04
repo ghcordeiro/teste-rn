@@ -1,13 +1,13 @@
 import Colors from '@colors';
-import Loading from '@components/Loading';
-import {TextBold, TextRegular} from '@globalStyle';
+import { TextBold, TextRegular } from '@globalStyle';
 import * as shape from 'd3-shape';
-import {darken} from 'polished';
-import React, {useCallback, useMemo, useState} from 'react';
-import {LayoutChangeEvent, Platform, View} from 'react-native';
-import Svg, {G, Path} from 'react-native-svg';
-import {IGraphData, ISalesPosition} from 'src/dtos/graphics';
-import {Container, DotSubtitle, RowSubtitle, Subtitle} from './styles';
+import { darken } from 'polished';
+import React, { useCallback, useMemo, useState } from 'react';
+import { LayoutChangeEvent, Platform, View } from 'react-native';
+import Svg, { G, Path } from 'react-native-svg';
+import { IGraphData, ISalesPosition } from 'src/dtos/graphics';
+import { Loading } from 'src/shared';
+import { Container, DotSubtitle, RowSubtitle, Subtitle } from './styles';
 
 interface IGraphSubtitle {
   label: string;
@@ -22,13 +22,13 @@ interface IPieChartProps {
 interface IPieDataItem {
   key: string | number;
   amount: number;
-  svg: {fill: string};
+  svg: { fill: string };
 }
 
 // Componente interno para renderizar o gráfico de pizza
 interface IPieChartSvgProps {
   data: Array<IPieDataItem>;
-  valueAccessor: (item: {item: IPieDataItem}) => number;
+  valueAccessor: (item: { item: IPieDataItem }) => number;
   children?: React.ReactNode;
   style?: object;
   innerRadius?: number | string;
@@ -45,15 +45,15 @@ const PieChartSvg: React.FC<IPieChartSvgProps> = ({
   outerRadius = '83%',
   padAngle = 0.05,
 }) => {
-  const [dimensions, setDimensions] = useState({width: 0, height: 0});
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   const handleLayout = useCallback((event: LayoutChangeEvent) => {
     const {
       nativeEvent: {
-        layout: {height, width},
+        layout: { height, width },
       },
     } = event;
-    setDimensions({width, height});
+    setDimensions({ width, height });
   }, []);
 
   const calculateRadius = useCallback(
@@ -69,13 +69,13 @@ const PieChartSvg: React.FC<IPieChartSvgProps> = ({
     [],
   );
 
-  const {arcs, pieSlices} = useMemo(() => {
+  const { arcs, pieSlices } = useMemo(() => {
     if (
       data.length === 0 ||
       dimensions.width === 0 ||
       dimensions.height === 0
     ) {
-      return {arcs: [], pieSlices: []};
+      return { arcs: [], pieSlices: [] };
     }
 
     const maxRadius = Math.min(dimensions.width, dimensions.height) / 2;
@@ -86,11 +86,11 @@ const PieChartSvg: React.FC<IPieChartSvgProps> = ({
     // @ts-ignore - d3-shape tem tipagem incompatível com objetos complexos
     const pie = shape
       .pie()
-      .value((d: any) => valueAccessor({item: d as IPieDataItem}))
+      .value((d: any) => valueAccessor({ item: d as IPieDataItem }))
       .sort(
         (a: any, b: any) =>
-          valueAccessor({item: b as IPieDataItem}) -
-          valueAccessor({item: a as IPieDataItem}),
+          valueAccessor({ item: b as IPieDataItem }) -
+          valueAccessor({ item: a as IPieDataItem }),
       )
       .startAngle(0)
       .endAngle(Math.PI * 2);
@@ -106,7 +106,7 @@ const PieChartSvg: React.FC<IPieChartSvgProps> = ({
         .padAngle(padAngle);
     });
 
-    return {arcs: createdArcs, pieSlices: slices};
+    return { arcs: createdArcs, pieSlices: slices };
   }, [
     data,
     dimensions,
@@ -120,17 +120,22 @@ const PieChartSvg: React.FC<IPieChartSvgProps> = ({
   if (dimensions.width === 0 || dimensions.height === 0) {
     return (
       <View style={style} onLayout={handleLayout}>
-        <View style={{flex: 1}} />
+        <View style={{ flex: 1 }} />
       </View>
     );
   }
 
   return (
     <View pointerEvents="box-none" style={style}>
-      <View pointerEvents="box-none" style={{flex: 1}} onLayout={handleLayout}>
+      <View
+        pointerEvents="box-none"
+        style={{ flex: 1 }}
+        onLayout={handleLayout}
+      >
         <Svg
           pointerEvents={Platform.OS === 'android' ? 'box-none' : undefined}
-          style={{height: dimensions.height, width: dimensions.width}}>
+          style={{ height: dimensions.height, width: dimensions.width }}
+        >
           <G x={dimensions.width / 2} y={dimensions.height / 2}>
             {/* Renderizar slices do gráfico */}
             {pieSlices.map((slice: any, index: number) => {
@@ -157,7 +162,8 @@ const PieChartSvg: React.FC<IPieChartSvgProps> = ({
                   alignItems: 'center',
                   width: '100%',
                   height: '100%',
-                }}>
+                }}
+              >
                 {children}
               </View>
             )}
@@ -168,28 +174,28 @@ const PieChartSvg: React.FC<IPieChartSvgProps> = ({
   );
 };
 
-const PieChart: React.FC<IPieChartProps> = ({data, loading}) => {
+const PieChart: React.FC<IPieChartProps> = ({ data, loading }) => {
   // Preparar dados do gráfico com useMemo
-  const {pieData, subtitle, hasNoData} = useMemo(() => {
+  const { pieData, subtitle, hasNoData } = useMemo(() => {
     const deliveredColor = darken(0.1, Colors.ecoop.primary);
     const soldColor = darken(0.1, Colors.ecoop.secondary);
 
     const delivered: IGraphData = {
       amount: data.delivered,
       key: 'Entregue',
-      svg: {fill: deliveredColor},
+      svg: { fill: deliveredColor },
     };
 
     const sold: IGraphData = {
       amount: data.delivered === 0 ? data.sold : data.sold - data.delivered,
       key: 'Vendido',
-      svg: {fill: soldColor},
+      svg: { fill: soldColor },
     };
 
     const p: Array<IGraphData> = [delivered, sold];
     const s: Array<IGraphSubtitle> = [
-      {color: deliveredColor, label: 'Entregue'},
-      {color: soldColor, label: 'Vendido'},
+      { color: deliveredColor, label: 'Entregue' },
+      { color: soldColor, label: 'Vendido' },
     ];
 
     return {
@@ -200,13 +206,13 @@ const PieChart: React.FC<IPieChartProps> = ({data, loading}) => {
   }, [data.delivered, data.sold, data.measurementUnit]);
 
   const valueAccessor = useCallback(
-    ({item}: {item: IGraphData}) => item.amount,
+    ({ item }: { item: IGraphData }) => item.amount,
     [],
   );
 
   return (
     <Container>
-      <View style={{paddingLeft: 16, paddingTop: 12}}>
+      <View style={{ paddingLeft: 16, paddingTop: 12 }}>
         <TextBold size={14}>Vendido x Entregue</TextBold>
       </View>
       {loading ? (
@@ -218,20 +224,22 @@ const PieChart: React.FC<IPieChartProps> = ({data, loading}) => {
             justifyContent: 'center',
             paddingVertical: 48,
             marginTop: 12,
-          }}>
+          }}
+        >
           <TextRegular size={14}>0</TextRegular>
           <TextRegular size={13}>0</TextRegular>
         </View>
       ) : (
         <>
           <PieChartSvg
-            style={{height: 200, marginTop: 12}}
+            style={{ height: 200, marginTop: 12 }}
             valueAccessor={valueAccessor}
             data={pieData}
             innerRadius="90%"
             outerRadius="83%"
-            padAngle={0}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            padAngle={0}
+          >
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
               <TextRegular size={14}>{`${Math.ceil(data.sold)} ${
                 data.measurementUnit
               } vendidas`}</TextRegular>
