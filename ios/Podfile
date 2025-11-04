@@ -1,13 +1,21 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
+# Resolve o react_native_pods.rb com node para permitir hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
     "react-native/scripts/react_native_pods.rb",
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+# --- INÍCIO DA CORREÇÃO DO FLIPPER ---
+# Adiciona a importação do Flipper que estava faltando
+# require_relative '../node_modules/react-native/scripts/flipper'
+# flipper_config = ENV['FLIPPER_DISABLE'] == '1' ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+# --- FIM DA CORREÇÃO DO FLIPPER ---
+
+# Plataforma que você especificou
 platform :ios, '15.1'
 prepare_react_native_project!
 
+# Seu bloco 'use_frameworks!' (mantido, pois é necessário para o Firebase)
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -18,35 +26,77 @@ end
 target 'ecooperativa' do
   config = use_native_modules!
 
+  # Adiciona a configuração do use_flipper!
+  # use_flipper!(flipper_config)
+
+  # --- Suas correções para o use_frameworks! (mantidas) ---
   # Isso corrige o erro do FirebaseCoreInternal vs GoogleUtilities
   pod 'GoogleUtilities', :modular_headers => true
+  # Yoga precisa de modular_headers com use_frameworks!
   pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
-  # pod 'glog', :path => '../node_modules/react-native/third-party-podspecs/glog.podspec', :modular_headers => true
-  # pod 'fmt', :path => '../node_modules/react-native/third-party-podspecs/fmt.podspec', :modular_headers => true
+  # --- Fim das suas correções ---
+
+  # --- INÍCIO DO BLOCO DA NOVA ARQUITETURA ---
+  # Este bloco é ESSENCIAL para o React Native 0.82.1
+  if ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+    ENV['DISABLE_POD_INSTALL_STATS'] = 'true'
+
+    pod 'React-Core', :path => config[:reactNativePath]
+    pod 'React-RCTFabric', :path => config[:reactNativePath]
+    pod 'React-RCTText', :path => config[:reactNativePath]
+    pod 'React-RCTImage', :path => config[:reactNativePath]
+    pod 'React-RCTAnimation', :path => config[:reactNativePath]
+    pod 'React-RCTNetwork', :path => config[:reactNativePath]
+    pod 'React-RCTSettings', :path => config[:reactNativePath]
+    pod 'React-RCTVibration', :path => config[:reactNativePath]
+    pod 'React-Codegen', :path => config[:reactNativePath]
+    pod 'RCT-Folly', :path => config[:reactNativePath]
+    pod 'RCTRequired', :path => config[:reactNativePath]
+    pod 'RCTTypeSafety', :path => config[:reactNativePath]
+    pod 'ReactCommon', :path => config[:reactNativePath]
+    pod 'React-hermes', :path => config[:reactNativePath]
+    pod 'hermes-engine'
+    pod 'React-jsi', :path => config[:reactNativePath]
+    pod 'React-jsc', :path => config[:reactNativePath]
+    pod 'React-Fabric', :path => config[:reactNativePath]
+    pod 'React-graphics', :path => config[:reactNativePath]
+    pod 'React-debug', :path => config[:reactNativePath]
+    pod 'React-Image', :path => config[:reactNativePath]
+    pod 'Folly', :path => config[:reactNativePath]
+  end
+  # --- FIM DO BLOCO DA NOVA ARQUITETURA ---
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    # Caminho absoluto para a raiz da sua aplicação.
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    # Configuração do Hermes (padrão para New Arch)
+    :hermes_enabled => true
   )
 
   post_install do |installer|
+    # # Adiciona o post_install do Flipper
+    # flipper_post_install(installer) if flipper_config == FlipperConfiguration.enabled
+
+    # Hook padrão do React Native
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
+      :mac_catalyst_enabled => false
     )
 
+    # --- Sua correção para glog/fmt (mesclada e melhorada) ---
     # Força os headers modulares para as dependências C++ do React
     # que conflitam com 'use_frameworks!'
     installer.pods_project.targets.each do |target|
-      if ['glog', 'fmt'].include?(target.name)
+      # Adicionei hermes e React-hermes, que também são C++ e podem falhar
+      if ['glog', 'fmt', 'React-hermes', 'hermes-engine'].include?(target.name)
         target.build_configurations.each do |config|
           config.build_settings['DEFINES_MODULE'] = 'YES'
           config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
         end
       end
     end
+    # --- Fim da sua correção ---
   end
 end
