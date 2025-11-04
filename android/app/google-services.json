@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "322598641926",
+    "project_id": "e-cooperativa",
+    "storage_bucket": "e-cooperativa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322598641926:android:911a5f1f3ec90821073e87",
+        "android_client_info": {
+          "package_name": "com.engenhoagro.ecooperativa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322598641926-gqk9apbml092vifqb2v5hq25sg1mpqb5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXwYdMCudID2F0U4_f6Chi_H6HVgKaKvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322598641926-gqk9apbml092vifqb2v5hq25sg1mpqb5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "322598641926-kn0ta5ktrumfkmaeu4ivt77kcsu7dfbu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.engenhoagro.ecooperativa",
+                "app_store_id": "1584016290"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

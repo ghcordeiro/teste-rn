@@ -5,17 +5,24 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, min_ios_version_supported
+platform :ios, '15.1'
 prepare_react_native_project!
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
 end
 
 target 'ecooperativa' do
   config = use_native_modules!
+
+  # Isso corrige o erro do FirebaseCoreInternal vs GoogleUtilities
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
+  # pod 'glog', :path => '../node_modules/react-native/third-party-podspecs/glog.podspec', :modular_headers => true
+  # pod 'fmt', :path => '../node_modules/react-native/third-party-podspecs/fmt.podspec', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -30,5 +37,16 @@ target 'ecooperativa' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Força os headers modulares para as dependências C++ do React
+    # que conflitam com 'use_frameworks!'
+    installer.pods_project.targets.each do |target|
+      if ['glog', 'fmt'].include?(target.name)
+        target.build_configurations.each do |config|
+          config.build_settings['DEFINES_MODULE'] = 'YES'
+          config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+        end
+      end
+    end
   end
 end
