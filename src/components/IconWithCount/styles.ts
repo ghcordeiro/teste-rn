@@ -1,11 +1,11 @@
-import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import styled from 'styled-components/native';
 
 interface IIconProps {
   count: number;
 }
 
-export const Icon = styled(AwesomeIcon)<IIconProps>`
+export const Icon = styled(FontAwesome)<IIconProps>`
   margin-right: ${(props) => (props.count === 0 ? 0 : 8)}px;
 `;
 

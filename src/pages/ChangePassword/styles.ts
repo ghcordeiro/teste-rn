@@ -1,8 +1,8 @@
 import Colors from '@colors';
-import {normalize} from '@size';
-import {getBottomSpace} from '@utils/iPhoneXHelper';
-import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import styled, {css} from 'styled-components/native';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
+import { normalize } from '@size';
+import { getBottomSpace } from '@utils/iPhoneXHelper';
+import styled, { css } from 'styled-components/native';
 
 interface IInputContainerProps {
   isFocused: boolean;
@@ -54,7 +54,7 @@ export const ContainerButton = styled.View`
   margin-left: 16px;
 `;
 
-export const Icon = styled(AwesomeIcon)`
+export const Icon = styled(FontAwesome)`
   flex: 2;
   margin-right: 8px;
 `;

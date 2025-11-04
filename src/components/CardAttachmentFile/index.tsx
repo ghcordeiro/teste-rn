@@ -3,7 +3,7 @@ import {TextRegular} from '@globalStyle';
 import React, {forwardRef, useImperativeHandle, useState} from 'react';
 import {Alert} from 'react-native';
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import api from 'src/services/api';
 import {navigate} from 'src/services/navigation';
 import Toast from 'src/utils/toast';
@@ -77,7 +77,7 @@ const CardAttachmentFile: React.ForwardRefRenderFunction<
         onDownload(true);
         openFile(data.assayResultFileId || '');
       }}>
-      <Icon name="file-pdf-o" size={25} style={{color: '#ADADAD'}} />
+      <FontAwesome name="file-pdf-o" size={25} style={{color: '#ADADAD'}} />
       <TextRegular color="#3D3D3D" marginLeft={8}>
         {data.fileName}
       </TextRegular>

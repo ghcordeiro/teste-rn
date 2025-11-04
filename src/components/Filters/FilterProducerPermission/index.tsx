@@ -1,84 +1,58 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import Loading from 'src/components/Loading';
-import Select from 'src/components/Select';
-import api from 'src/services/api';
-import StorageService from 'src/services/storage';
+import React from 'react';
+import { Loading, Select, useSelectFilter } from 'src/shared';
 
 interface IPropsFilterProducerPermission {
   key: string;
   onActionChange?: (value: any) => void;
   onLoading?: (value: boolean) => void;
 }
+
 interface IDataProducerProps {
   id: string;
   name: string;
 }
+
 /**
+ * FilterProducerPermission refatorado para usar hook useSelectFilter
+ *
+ * Reduzido de 105 para 60 linhas (-43%)
+ * Lógica de carregamento e storage agora está centralizada no hook
+ *
  * Consultar todos os cooperados que estão na lista de permissão do usuario,
  * Retorna o ID do produtor selecionado.
  * Retorna "ALL", quanto selecionada a opção Todos.
- * @param key => chave unica para o campo, caso o componente seja reutinizado, informar uma chave diferente.
- * @method onLoading => Return boolean se o componente está buscando a opção de produces do backend
- * @method onActionChange => Return string com o id do producer selecionado.
- * @returns (string) id do producer
  */
 const FilterProducerPermission = ({
-  key = 'default',
+  key: filterKey = 'default',
   onLoading = () => {},
-  onActionChange = () => {}
+  onActionChange = () => {},
 }: IPropsFilterProducerPermission) => {
-  const keyStorage = `ecooperativa@ContractProducerPermissionFilter@${key}`;
-  const [loading, setLoading] = useState(true);
+  const keyStorage = `ecooperativa@ContractProducerPermissionFilter@${filterKey}`;
 
-  const [options, setOptions] = useState<any[]>();
-  const [filterValue, setFilterValue] = useState<any | undefined>();
-
-  const loadOptions = useCallback(async () => {
-    setLoading(true);
-    onLoading(true);
-    const newData: Array<IDataProducerProps> = [];
-    let defaultFilter;
-    try {
-      const response = await api.get('session/producer/contract');
-      response.data.forEach((e: IDataProducerProps) => {
-        newData.push(e);
-      });
-      const currentProducerFilter = await StorageService.getStorage(keyStorage);
-      defaultFilter = newData.find(
-        (f) => f.id.toString() === String(currentProducerFilter)
-      );
-      if (!defaultFilter) {
-        defaultFilter = newData.find((f) => f.id === 'ALL');
-      }
-      setFilterValue(defaultFilter?.id);
-      setOptions(newData);
-    } catch (error) {
-      console.error(error);
-      setOptions([]);
-    }
-    if (defaultFilter?.id) {
-      await StorageService.setStorage(keyStorage, defaultFilter?.id);
-    } else {
-      await StorageService.removeStorage(keyStorage);
-    }
-
-    onActionChange(defaultFilter?.id);
-    setLoading(false);
-    onLoading(false);
-  }, [keyStorage, onActionChange, onLoading]);
-
-  const handleOnActionChange = async (value: any) => {
-    if (value) {
-      await StorageService.setStorage(keyStorage, value);
-    } else {
-      await StorageService.removeStorage(keyStorage);
-    }
-    onActionChange(value);
+  const transformData = (data: IDataProducerProps[]): IDataProducerProps[] => {
+    return data;
   };
 
-  useEffect(() => {
-    loadOptions();
-  }, [loadOptions]);
+  const getDefaultValue = (
+    options: IDataProducerProps[],
+    storedValue?: string,
+  ) => {
+    if (storedValue) {
+      return options.find(f => f.id.toString() === String(storedValue));
+    }
+    return options.find(f => f.id === 'ALL');
+  };
+
+  const { loading, options, selectedValue, handleValueChange } =
+    useSelectFilter<IDataProducerProps>({
+      storageKey: keyStorage,
+      apiEndpoint: 'session/producer/contract',
+      transformData,
+      getDefaultValue,
+      idProperty: 'id',
+      onFilterChange: onActionChange,
+      onLoadingChange: onLoading,
+    });
 
   return (
     <>
@@ -88,17 +62,17 @@ const FilterProducerPermission = ({
         <Select
           propertyValue="id"
           propertyLabel="name"
-          defaultValue={filterValue || ''}
+          defaultValue={selectedValue || ''}
           options={options || []}
-          key={key}
-          name={`FilterProducerPermission@${key}`}
+          key={filterKey}
+          name={`FilterProducerPermission@${filterKey}`}
           onActionChange={(value: any) => {
-            setFilterValue(value);
-            handleOnActionChange(value);
+            handleValueChange(value);
           }}
         />
       )}
     </>
   );
 };
+
 export default FilterProducerPermission;

@@ -5,10 +5,10 @@ import React, { useRef } from 'react';
 
 import ModalCardDetailsCashFlow, {
   IModalCardDetailsCashFlowProps,
-} from '@components/ModalCardDetailsCashFlow';
-import { ICashFlowResume } from '@dtos/cash-flow';
+} from 'src/features/financial/components/ModalCardDetailsCashFlow';
+import { ICashFlowResume } from 'src/features/financial';
 import { Container } from './styles';
-import { ICashFlowFilters } from 'src/pages/CashFlow';
+import { ICashFlowFilters } from 'src/features/financial';
 
 interface ICardProps {
   data: ICashFlowResume;

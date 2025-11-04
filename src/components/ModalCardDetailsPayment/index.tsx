@@ -1,19 +1,19 @@
 /* eslint-disable no-underscore-dangle */
 import Colors from '@colors';
-import Loading from '@components/Loading';
 import { Divider, Row, TextBold, TextLight } from '@globalStyle';
 import { normalize } from '@size';
 import React, {
   forwardRef,
   useCallback,
   useImperativeHandle,
-  useState
+  useState,
 } from 'react';
 import { View } from 'react-native';
 import Modal from 'react-native-modal';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
-import { IPayment, IPaymentItem } from 'src/dtos/contract';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
+import { IPayment, IPaymentItem } from 'src/features/contracts';
 import api from 'src/services/api';
+import { Loading } from 'src/shared';
 
 import convertCurrency from '@utils/convertCurrency';
 import convertData from '@utils/convertData';
@@ -42,7 +42,7 @@ const ModalCardDetailsPayment: React.ForwardRefRenderFunction<
       setLoading(true);
 
       const response = await api.get(
-        `salescontract/get/${contractId}/payment-invoice/${payment._id}`
+        `salescontract/get/${contractId}/payment-invoice/${payment._id}`,
       );
       setData(response.data);
     } catch (e) {
@@ -66,7 +66,7 @@ const ModalCardDetailsPayment: React.ForwardRefRenderFunction<
   useImperativeHandle(ref, () => {
     return {
       openModal,
-      closeModal
+      closeModal,
     };
   });
 
@@ -83,10 +83,11 @@ const ModalCardDetailsPayment: React.ForwardRefRenderFunction<
       backdropTransitionOutTiming={600}
       onBackButtonPress={() => setVisible(false)}
       onBackdropPress={() => setVisible(false)}
-      shouldRasterizeIOS>
+      shouldRasterizeIOS
+    >
       <ModalContainer>
         <Header>
-          <FAIcon
+          <FontAwesome
             name="truck"
             color={Colors.white}
             size={normalize(18)}
@@ -97,7 +98,8 @@ const ModalCardDetailsPayment: React.ForwardRefRenderFunction<
             adjustsFontSizeToFit
             size={18}
             color={Colors.white}
-            marginLeft={8}>
+            marginLeft={8}
+          >
             DOC {payment.document}
           </TextLight>
         </Header>
@@ -142,17 +144,17 @@ const ModalCardDetailsPayment: React.ForwardRefRenderFunction<
                   </TextBold>
                 </Row>
                 <Row justifyContent="space-between">
-                  <TextLight>Preço</TextLight>
+                  <TextLight translationKey="price" />
                   <TextBold>
                     {convertCurrency(data.price, data.alternativeCurrency)}
                   </TextBold>
                 </Row>
                 <Row justifyContent="space-between">
-                  <TextLight>Valor</TextLight>
+                  <TextLight translationKey="value" />
                   <TextBold>
                     {convertCurrency(
                       data.amount / data.ptax,
-                      data.alternativeCurrency
+                      data.alternativeCurrency,
                     )}
                   </TextBold>
                 </Row>

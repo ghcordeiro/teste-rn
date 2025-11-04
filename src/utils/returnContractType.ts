@@ -1,4 +1,4 @@
-import { EContractType } from 'src/dtos/contract';
+import { EContractType } from 'src/features/contracts/types/contract';
 
 export type ITypeDefinition = {
   type: EContractType;

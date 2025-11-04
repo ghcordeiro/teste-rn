@@ -2,7 +2,7 @@ import { TextBold } from '@globalStyle';
 import React, { useRef } from 'react';
 import { Platform, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { IAttachmentDeliveryOrder } from '../../dtos/delivery-order';
+import { IAttachmentDeliveryOrder } from 'src/features/withdrawals';
 import CardAttachmentWithdrawal from './components/CardAttachmentWithdrawal';
 
 interface ITabContractAdvanceProps {

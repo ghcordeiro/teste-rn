@@ -2,7 +2,7 @@ import Colors from '@colors';
 import {Version} from '@components/Version';
 import {TextBold} from '@globalStyle';
 import {CommonActions, useNavigation} from '@react-navigation/native';
-import {translate} from '@translate';
+import {useTranslation} from '@translate/hooks';
 import {Alert, Platform} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useAuth} from 'src/hooks/UserContext';
@@ -10,6 +10,7 @@ import Toast from 'src/utils/toast';
 import {ButtonSelect, Container, Scroll} from './styles';
 
 const SelectProducer = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const auth = useAuth();
 
@@ -21,7 +22,7 @@ const SelectProducer = () => {
           auth.setProducer(id);
           if (user.user.newPassword) {
             Alert.alert(
-              'Para continuar, é necessário definir uma nova senha',
+              t('authNewPasswordRequired'),
               '',
               [
                 {
@@ -37,7 +38,7 @@ const SelectProducer = () => {
                         ],
                       }),
                     ),
-                  text: translate('confirm'),
+                  text: t('commonConfirm'),
                 },
               ],
             );
@@ -76,13 +77,13 @@ const SelectProducer = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         enabled>
         <TextBold color={Colors.white}>
-          {translate('selectthecooperative')}
+          {t('authSelectCooperative')}
         </TextBold>
         <Scroll showsVerticalScrollIndicator={false}>
           {auth.user?.producers.map(r => (
             <ButtonSelect
               onPress={() => handleSelect(r.id)}
-              key={String(Math.random())}>
+              key={r.id}>
               <TextBold color={Colors.white}>{r.name}</TextBold>
             </ButtonSelect>
           ))}

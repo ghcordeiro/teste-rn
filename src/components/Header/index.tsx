@@ -1,8 +1,9 @@
 import Colors from '@colors';
 import { IconWithCount } from '@components/IconWithCount';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import { useNavigation } from '@react-navigation/core';
 import React, { useEffect } from 'react';
-import FaIcon from 'react-native-vector-icons/Feather';
+import { useServer } from 'src/hooks/ServerContext';
 import { useAuth } from 'src/hooks/UserContext';
 import { useWithdrawal } from 'src/hooks/WithdrawalContext';
 import Ecooperativa from '../../assets/images/ECoop/ecooperativa.svg';
@@ -11,10 +12,8 @@ import {
   ColumnFilterButton,
   Container,
   ContainerBackButton,
-  ContainerLogo
+  ContainerLogo,
 } from './styles';
-import { useServer } from 'src/hooks/ServerContext';
-import { TextBold } from '@globalStyle';
 
 interface ICardHeader {
   showBackButton: boolean;
@@ -34,26 +33,28 @@ const Header = ({ showBackButton, showRightButton = true }: ICardHeader) => {
   const handleWithdrawalCart = () => {
     navigation.navigate('WithdrawalCart');
   };
-  useEffect(()=>{console.log('ICardHeader envServer => ', envServer)}, [envServer])
+  useEffect(() => {
+    console.log('ICardHeader envServer => ', envServer);
+  }, [envServer]);
 
   return (
     <Container>
       <ContainerBackButton>
         {showBackButton && (
           <ColumnBackButton onPress={handleBack}>
-            <FaIcon name="arrow-left" size={26} color={Colors.white} />
+            <FontAwesome name="arrow-left" size={26} color={Colors.white} />
           </ColumnBackButton>
         )}
       </ContainerBackButton>
       <ContainerLogo>
         <Ecooperativa height={30} width={200} />
-        { /*envServer && <TextBold color={Colors.ecoop.primary} size={24}>
+        {/*envServer && <TextBold color={Colors.ecoop.primary} size={24}>
           {envServer.companyCode}
         </TextBold> */}
       </ContainerLogo>
       <ContainerBackButton>
         {showRightButton &&
-          user?.permissions.find((f) => f === 'APP:STOCKWITHDRAWAL') && (
+          user?.permissions.find(f => f === 'APP:STOCKWITHDRAWAL') && (
             <ColumnFilterButton onPress={handleWithdrawalCart}>
               <IconWithCount
                 action={handleWithdrawalCart}

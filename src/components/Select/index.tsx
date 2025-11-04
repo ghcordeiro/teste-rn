@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getBottomSpace } from '@utils/iPhoneXHelper';
 import { FlatList, Modal, SafeAreaView, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 
 import {
   BackButton,
@@ -102,7 +102,7 @@ function Select({
               }
             )}
           </TextRegular>
-          <Icon name="chevron-down" size={16} />
+          <FontAwesome name="chevron-down" size={16} />
         </Touch>
         <Modal
           animationType="slide"
@@ -111,7 +111,7 @@ function Select({
           <SafeAreaView style={{ backgroundColor: Colors.ecoop.darkGray }} />
           <Header>
             <BackButton onPress={() => setModalVisible(false)}>
-              <Icon
+              <FontAwesome
                 name="chevron-left"
                 size={24}
                 color={Colors.ecoop.darkGray}

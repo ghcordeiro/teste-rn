@@ -1,6 +1,6 @@
 import {buttonSize, normalize} from '@size';
 import {darken} from 'polished';
-import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import styled, {css} from 'styled-components/native';
 import Colors from '../../assets/colors';
 
@@ -60,7 +60,7 @@ export const ContainerIndicator = styled.TouchableOpacity`
   z-index: 10;
 `;
 
-export const Icon = styled(AwesomeIcon)`
+export const Icon = styled(FontAwesome)`
   margin-right: 8px;
   width: auto;
 `;

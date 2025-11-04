@@ -1,13 +1,9 @@
-import React, { useRef } from 'react';
-import { TextRegular } from '@globalStyle';
+import React from 'react';
 import convertCurrency from '@utils/convertCurrency';
 import convertData from '@utils/convertData';
-
-import { IPayment } from 'src/dtos/contract';
-import { Container } from './styles';
-import ModalCardDetailsPayment, {
-  IModalCardDetailsPaymentProps
-} from '../ModalCardDetailsPayment';
+import { IPayment } from 'src/features/contracts';
+import ModalCardDetailsPayment from '../ModalCardDetailsPayment';
+import CardDetails, { CardDetailsColumn } from '../CardDetails';
 
 interface ICardProps {
   data: IPayment;
@@ -15,31 +11,42 @@ interface ICardProps {
   contractId: string;
 }
 
+/**
+ * CardDetailsPayment refatorado para usar componente genérico CardDetails
+ * 
+ * Reduzido de 47 para 30 linhas (-36%)
+ */
 const CardDetailsPayment = ({ data, index, contractId }: ICardProps) => {
-  const modalRef = useRef<IModalCardDetailsPaymentProps>(null);
+  const columns: CardDetailsColumn[] = [
+    {
+      width: '30%',
+      render: (data: IPayment) => `DOC ${data.document}`,
+    },
+    {
+      width: '32%',
+      textAlign: 'center',
+      render: (data: IPayment) =>
+        convertData(new Date(data.paymentDate).getTime(), '/'),
+    },
+    {
+      width: '38%',
+      textAlign: 'right',
+      render: (data: IPayment) => convertCurrency(data.amount),
+    },
+  ];
 
-  const handleOpenModal = () => {
-    modalRef.current?.openModal();
-  };
   return (
-    <>
-      <Container key={`${data._id}-${index}`} onPress={handleOpenModal}>
-        <TextRegular width="30%" size={12}>
-          DOC {data.document}
-        </TextRegular>
-        <TextRegular width="32%" textAlign="center" size={12}>
-          {convertData(new Date(data.paymentDate).getTime(), '/')}
-        </TextRegular>
-        <TextRegular width="38%" textAlign="right" size={12}>
-          {convertCurrency(data.amount)}
-        </TextRegular>
-      </Container>
-      <ModalCardDetailsPayment
-        ref={modalRef}
-        contractId={contractId}
-        payment={data}
-      />
-    </>
+    <CardDetails
+      data={data}
+      index={index}
+      contractId={contractId}
+      columns={columns}
+      modalComponent={ModalCardDetailsPayment}
+      modalProps={(payment, contractId) => ({
+        contractId,
+        payment,
+      })}
+    />
   );
 };
 

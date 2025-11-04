@@ -1,15 +1,15 @@
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
-import Button from '@components/Button';
 import InputMask, { InputRef } from '@components/InputMask';
 import { Version } from '@components/Version';
 import { CenteredFlex } from '@globalStyle';
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/core';
 import { width } from '@size';
-import { translate } from '@translate';
+import { useTranslation } from '@translate/hooks';
 import React, { useRef, useState } from 'react';
 import { Alert, Platform, View } from 'react-native';
 import { useAuth } from 'src/hooks/UserContext';
+import Button from 'src/shared/components/Button';
 import ECoop from '../../assets/images/ECoop/e-coop_logo-01.svg';
 import { Container, Scroll } from './styles';
 
@@ -20,6 +20,7 @@ interface IRouteParams {
 }
 
 const ChangePassword = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const auth = useAuth();
   const route: IRouteParams = useRoute();
@@ -37,10 +38,8 @@ const ChangePassword = () => {
             .then(() => {
               setLoadingSearch(false);
               Alert.alert(
-                'Senha alterada com sucesso!',
-                route.params?.firstLogin
-                  ? ''
-                  : 'A aplicação será reiniciada, aguarde!',
+                t('authPasswordChangedSuccess'),
+                route.params?.firstLogin ? '' : t('authAppWillRestart'),
                 [
                   {
                     onPress: () =>
@@ -49,44 +48,46 @@ const ChangePassword = () => {
                           index: 1,
                           routes: [
                             {
-                              name: route.params?.firstLogin ? 'App' : 'Initial'
-                            }
-                          ]
-                        })
+                              name: route.params?.firstLogin
+                                ? 'App'
+                                : 'Initial',
+                            },
+                          ],
+                        }),
                       ),
-                    text: 'Ok'
-                  }
-                ]
+                    text: t('commonOk'),
+                  },
+                ],
               );
             })
             .catch(() => setLoadingSearch(false));
         } else {
           confirmPassRef.current?.isError(true);
           setLoadingSearch(false);
-          Alert.alert('As senhas não coincidem');
+          Alert.alert(t('authPasswordsNotMatch'));
         }
       } else {
         confirmPassRef.current?.isError(true);
         setLoadingSearch(false);
-        Alert.alert('O a confirmação deve ser informado');
+        Alert.alert(t('authConfirmPasswordRequired'));
       }
     } else {
       passRef.current?.isError(true);
       setLoadingSearch(false);
-      Alert.alert('O a senha deve ser informado');
+      Alert.alert(t('authPasswordRequired'));
     }
   };
 
   const handleCancel = () => {
-    Alert.alert('Deseja mesmo cancelar a alteração de senha?', '', [
+    Alert.alert(t('authCancelPasswordChange'), '', [
       {
         onPress: () => navigation.goBack(),
-        text: 'Sim'
+        text: t('commonYes'),
       },
       {
         onPress: () => {},
-        text: 'Não'
-      }
+        text: t('commonNo'),
+      },
     ]);
   };
 
@@ -95,7 +96,8 @@ const ChangePassword = () => {
       <Scroll
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
+        contentContainerStyle={{ flex: 1, justifyContent: 'center' }}
+      >
         <CenteredFlex>
           <ECoop
             width={width - width / 4}
@@ -109,21 +111,21 @@ const ChangePassword = () => {
             ref={passRef}
             icon="key"
             type="password"
-            placeholder={translate('password')}
+            placeholder={t('authPassword')}
             isEnable
           />
           <InputMask
             ref={confirmPassRef}
             icon="key"
             type="password"
-            placeholder={translate('confirmPassword')}
+            placeholder={t('authConfirmPassword')}
             isEnable
           />
           <Button size="normal" loading={loadingSearch} onPress={handleSubmit}>
-            change
+            commonChange
           </Button>
           <Button size="normal" loading={loadingSearch} onPress={handleCancel}>
-            cancel
+            commonCancel
           </Button>
         </View>
       </Scroll>

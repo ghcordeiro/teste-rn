@@ -1,25 +1,26 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-import CardHomeMoviment from '@components/CardHomeMoviment';
-import Header from '@components/Header';
 import HeaderContent from '@components/HeaderContent';
 import ModalSelectRetirada, {
   IModalSelectRetiradaProps,
 } from '@components/ModalSelectRetirada';
-import {useNavigation} from '@react-navigation/core';
-import {useTranslation} from '@translate/hooks';
-import Button from 'src/components/Button';
-import {IFinancialStatementProps} from 'src/dtos/financialStatement';
-import {useFirebase} from 'src/hooks/FirebaseContext';
-import {useAuth} from 'src/hooks/UserContext';
+import { useNavigation } from '@react-navigation/core';
+import { useTranslation } from '@translate/hooks';
+import {
+  CardHomeMoviment,
+  IFinancialStatementProps,
+} from 'src/features/financial';
+import { useFirebase } from 'src/hooks/FirebaseContext';
+import { useAuth } from 'src/hooks/UserContext';
 import api from 'src/services/api';
-import {navigate} from '../../services/navigation';
-import {Container, ContainerButtonDash, Space} from './styles';
+import { Button, Header } from 'src/shared';
+import { navigate } from '../../services/navigation';
+import { Container, ContainerButtonDash, Space } from './styles';
 
 const Home = () => {
   const { t } = useTranslation();
   const auth = useAuth();
-  const {nextPage} = useFirebase();
+  const { nextPage } = useFirebase();
   const navigation = useNavigation();
   // const [loading, setLoading] = useState<boolean>(false);
   const [dataMovto, setDataMovot] = useState<IFinancialStatementProps[]>(
@@ -61,7 +62,8 @@ const Home = () => {
           <Button
             loading={false}
             onPress={() => navigate('Dashboard')}
-            icon="bar-chart">
+            icon="bar-chart"
+          >
             {t('Dashboard')}
           </Button>
         </ContainerButtonDash>
@@ -72,7 +74,8 @@ const Home = () => {
             <Button
               loading={false}
               onPress={handleOpenModal}
-              icon="shopping-cart">
+              icon="shopping-cart"
+            >
               {t('Retiradas')}
             </Button>
           </ContainerButtonDash>

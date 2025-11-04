@@ -2,7 +2,7 @@ import Colors from '@colors';
 import {normalize} from '@size';
 import {getBottomSpace} from '@utils/iPhoneXHelper';
 import {darken} from 'polished';
-import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import styled, {css} from 'styled-components/native';
 
 interface IInputContainerProps {
@@ -63,7 +63,7 @@ export const ContainerButton = styled.View`
   margin-left: 16px;
 `;
 
-export const Icon = styled(AwesomeIcon)`
+export const Icon = styled(FontAwesome)`
   flex: 2;
   margin-right: 8px;
 `;

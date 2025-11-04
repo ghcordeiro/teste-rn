@@ -1,10 +1,15 @@
-import Button from '@components/Button';
-import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
-import {Platform} from 'react-native';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import { Platform } from 'react-native';
 import Modal from 'react-native-modal';
-import {useAuth} from 'src/hooks/UserContext';
+import { useAuth } from 'src/hooks/UserContext';
 import api from 'src/services/api';
-import {Container, ContainerButton, VideoComponent} from './styles';
+import Button from 'src/shared/components/Button';
+import { Container, ContainerButton, VideoComponent } from './styles';
 
 export interface ReciveProps {
   renderPlayer: () => void;
@@ -18,7 +23,7 @@ interface IVideoPlayerComponentProps {
 const VideoPlayerComponent: React.ForwardRefRenderFunction<
   ReciveProps,
   IVideoPlayerComponentProps
-> = ({id, loading}: IVideoPlayerComponentProps, ref) => {
+> = ({ id, loading }: IVideoPlayerComponentProps, ref) => {
   const videoRef = useRef<Video>(null);
   const [visible, setVisible] = useState(false);
 
@@ -78,7 +83,8 @@ const VideoPlayerComponent: React.ForwardRefRenderFunction<
           backdropTransitionOutTiming={600}
           onBackButtonPress={() => setVisible(false)}
           onBackdropPress={() => setVisible(false)}
-          shouldRasterizeIOS>
+          shouldRasterizeIOS
+        >
           <Container>
             {visible && Platform.OS === 'ios' && (
               <VideoComponent
@@ -107,8 +113,9 @@ const VideoPlayerComponent: React.ForwardRefRenderFunction<
                 loading={false}
                 onPress={() => setVisible(false)}
                 icon="close"
-                size="small">
-                close
+                size="small"
+              >
+                commonClose
               </Button>
             </ContainerButton>
           </Container>

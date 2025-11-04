@@ -6,7 +6,7 @@ import CardAttachmentVideo, {
     ICardAttachmentVideoReciveProps,
 } from '@components/CardAttachmentVideo';
 import { IAttachmentProps } from '@dtos/attachment';
-import { IMobileNotification } from '@dtos/notification';
+import { IMobileNotification } from 'src/features/notifications';
 import { TextBold, TextRegular } from '@globalStyle';
 import { AxiosResponse } from 'axios';
 import React, {

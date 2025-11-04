@@ -1,29 +1,27 @@
 /* eslint-disable no-underscore-dangle */
 import Colors from '@colors';
-import Loading from '@components/Loading';
-import { Flex, Divider, Row, TextBold, TextLight, TextRegular } from '@globalStyle';
+import { Flex, Row, TextLight, TextRegular } from '@globalStyle';
+import { useRoute } from '@react-navigation/core';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { normalize } from '@size';
-import {useRoute} from '@react-navigation/core';
+import convertData from '@utils/convertData';
+import convertHours from '@utils/convertHours';
+import returnContractType, { ITypeDefinition } from '@utils/returnContractType';
 import React, {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
-  useState
+  useState,
 } from 'react';
 import { FlatList, Platform, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
-import { ITicket, IInvoiceItem, ITimelineItemDTO } from 'src/dtos/logistics';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
+import { IDataDTO } from 'src/dtos/logistics';
+import { ITicket, ITimelineItemDTO } from 'src/features/logistics';
+import { getMaterialTopTabScreenOptions } from 'src/routes/config/materialTopTabOptions';
 import api from 'src/services/api';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import convertCurrency from '@utils/convertCurrency';
-import convertData from '@utils/convertData';
-import returnContractType, { ITypeDefinition } from '@utils/returnContractType';
 import { ContainerTimelineCard, Header, ModalContainer } from './styles';
-import {IDataDTO} from 'src/dtos/logistics';
-import { NavigationContainer } from '@react-navigation/native';
-import convertHours from '@utils/convertHours';
 
 export interface IModalCardDetailsLogsticsProps {
   openModal: () => void;
@@ -43,24 +41,35 @@ interface TimelineTabProps {
 }
 
 const Tab = createMaterialTopTabNavigator();
-//const [dataGeneral, setDataGeneral] = useState<IDataDTO>({} as IDataDTO);
 
+// Componentes nomeados para evitar warnings de componentes inline
+const DetailsTabWrapper = ({ route }: any) => {
+  const { dataGeneral } = route.params || {};
+  return <DetailsTab dataGeneral={dataGeneral} />;
+};
+
+const TimelineTabWrapper = ({ route }: any) => {
+  const { dataGeneral } = route.params || {};
+  return <TimelineTab dataGeneral={dataGeneral} />;
+};
 
 const DetailsTab = ({ dataGeneral }: DetailsTabProps) => {
   return (
     <View style={styles.tabContent}>
       <Text>{dataGeneral.plate}</Text>
-      <Text>{convertData(
-                new Date(dataGeneral.startDate).getTime(),
-                '/',
-                false,
-                'full'
-              )}</Text>
+      <Text>
+        {convertData(
+          new Date(dataGeneral.startDate).getTime(),
+          '/',
+          false,
+          'full',
+        )}
+      </Text>
       <Text>{dataGeneral.document}</Text>
       <Text>{`${dataGeneral.quantity} ${dataGeneral.measurementUnit}`}</Text>
-      <Text>{dataGeneral.carrier}</Text>     
-      <Text>{dataGeneral.driver}</Text> 
-      <Text>{`Tempo Atual: ${convertHours(dataGeneral.timeStep)} Hr`}</Text> 
+      <Text>{dataGeneral.carrier}</Text>
+      <Text>{dataGeneral.driver}</Text>
+      <Text>{`Tempo Atual: ${convertHours(dataGeneral.timeStep)} Hr`}</Text>
       <Text>{`Tempo Total: ${convertHours(dataGeneral.timeAll)} Hr`}</Text>
     </View>
   );
@@ -69,8 +78,10 @@ const DetailsTab = ({ dataGeneral }: DetailsTabProps) => {
 const TimelineTab = ({ dataGeneral }: TimelineTabProps) => {
   const renderTimelineItem = ({ item }: { item: ITimelineItemDTO }) => (
     <ContainerTimelineCard>
-      <Row justifyContent='space-between'>
-        <TextRegular>{convertData(new Date(item.dateOf).getTime(), '/', true, 'full')}</TextRegular>
+      <Row justifyContent="space-between">
+        <TextRegular>
+          {convertData(new Date(item.dateOf).getTime(), '/', true, 'full')}
+        </TextRegular>
         <TextRegular marginTop={8}>{`${convertHours(item.time)}`}</TextRegular>
       </Row>
       <TextRegular style={styles.itemText}>{item.timelineText}</TextRegular>
@@ -80,13 +91,13 @@ const TimelineTab = ({ dataGeneral }: TimelineTabProps) => {
   return (
     <FlatList
       data={dataGeneral.timeline}
-      keyExtractor={(item) => item.sequence.toString()}
+      keyExtractor={item => item.sequence.toString()}
       renderItem={renderTimelineItem}
       style={{
         marginBottom: Platform.OS === 'android' ? 64 : 16,
         marginTop: Platform.OS === 'android' ? 16 : 8,
         paddingHorizontal: 8,
-        paddingVertical: 16
+        paddingVertical: 16,
       }}
     />
   );
@@ -99,12 +110,12 @@ interface IRouteProps {
 }
 
 const ModalCardDetailsLogistics: React.ForwardRefRenderFunction<
-IModalCardDetailsLogsticsProps,
+  IModalCardDetailsLogsticsProps,
   ReciveProps
 > = ({ ticket }, ref) => {
   const route: IRouteProps = useRoute();
 
-  const [dataGeneral, setDataGeneral] = useState<IDataDTO | null>(null);  
+  const [dataGeneral, setDataGeneral] = useState<IDataDTO | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(true);
   const [visible, setVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -115,7 +126,9 @@ IModalCardDetailsLogsticsProps,
 
   const handleLoadGeneral = useCallback(async (ticket: ITicket) => {
     try {
-      const response = await api.get(`salescontract-delivery/get/${ticket.contractDeliveryId}/ticket/${ticket._id}`);
+      const response = await api.get(
+        `salescontract-delivery/get/${ticket.contractDeliveryId}/ticket/${ticket._id}`,
+      );
       setDataGeneral(response.data);
       setLoadingProgress(false);
     } catch (e: any) {
@@ -145,7 +158,7 @@ IModalCardDetailsLogsticsProps,
   useImperativeHandle(ref, () => {
     return {
       openModal,
-      closeModal
+      closeModal,
     };
   });
 
@@ -170,10 +183,11 @@ IModalCardDetailsLogsticsProps,
       backdropTransitionOutTiming={600}
       onBackButtonPress={() => setVisible(false)}
       onBackdropPress={() => setVisible(false)}
-      shouldRasterizeIOS>
+      shouldRasterizeIOS
+    >
       <ModalContainer>
         <Header>
-          <FAIcon
+          <FontAwesome
             name="truck"
             color={Colors.white}
             size={normalize(18)}
@@ -184,46 +198,27 @@ IModalCardDetailsLogsticsProps,
             adjustsFontSizeToFit
             size={18}
             color={Colors.white}
-            marginLeft={8}>
+            marginLeft={8}
+          >
             {ticket.plate}
           </TextLight>
         </Header>
         <Flex>
-        <NavigationContainer independent>
-          <Tab.Navigator tabBarOptions={{
-                style: {
-                  backgroundColor: Colors.ecoop.darkGray,
-                },
-                labelStyle: {
-                  fontWeight: 'bold',
-                  width: '100%',
-                  textAlign: 'center',
-                  margin: 0,
-                  padding: 0,
-                  fontSize: normalize(12),
-                },
-                activeTintColor: '#FFF',
-                inactiveTintColor: '#ADADAD',
-                indicatorStyle: {
-                  marginBottom: 4,
-                  backgroundColor: '#FFF',
-                },
-              }}
-              initialRouteName="Detalhes">
-            <Tab.Screen 
+          <Tab.Navigator
+            screenOptions={getMaterialTopTabScreenOptions()}
+            initialRouteName="Detalhes"
+          >
+            <Tab.Screen
               name="Detalhes"
-              component={
-                () => <DetailsTab dataGeneral={dataGeneral} />
-              }
+              component={DetailsTabWrapper}
+              initialParams={{ dataGeneral }}
             />
             <Tab.Screen
               name="Timeline"
-              component={
-                () => <TimelineTab dataGeneral={dataGeneral} />
-              }
+              component={TimelineTabWrapper}
+              initialParams={{ dataGeneral }}
             />
           </Tab.Navigator>
-        </NavigationContainer>
         </Flex>
       </ModalContainer>
     </Modal>
@@ -233,18 +228,18 @@ IModalCardDetailsLogsticsProps,
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f2f2f2",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f2f2f2',
   },
   openButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: '#007BFF',
     padding: 15,
     borderRadius: 8,
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
   },
   tabContent: {
     flex: 1,
@@ -252,20 +247,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   item: {
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderBottomColor: '#ccc',
   },
   itemText: {
     fontSize: 16,
   },
   dateText: {
     fontSize: 14,
-    color: "#666",
+    color: '#666',
   },
 });
 

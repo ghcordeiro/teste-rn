@@ -83,7 +83,7 @@ const downloadFile = async (
   fileName: string,
   fileExtension: string,
 ): Promise<void> => {
-  const load = Toast.showLoading('Gerando arquivo...');
+  const load = Toast.showLoading(translate('labelLoading'));
   const diretory = 'Ecooperativa';
   const {fs, config} = ReactNativeBlobUtil;
   const {
@@ -97,11 +97,7 @@ const downloadFile = async (
   console.log('System Path: ', path);
   if (!path || !(await exists(path))) {
     throw new Error(
-      translate(
-        'could_not_get_directory_settings_to_save_file_to_device_Platform',
-        {platform: Platform.OS},
-      ),
-      /* `Could not get directory settings to save file to device. Platform ()${Platform.OS}` */
+      translate('errorCouldNotGetDirectory', {plataforma: Platform.OS}),
     );
   }
 

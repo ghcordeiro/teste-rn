@@ -1,13 +1,14 @@
 /* eslint-disable no-underscore-dangle */
-// import Button from '@components/Button';
+// import Button from 'src/shared/components/Button';
 import Colors from '@colors';
 import { Row, TextBold, TextRegular } from '@globalStyle';
 import { useNavigation } from '@react-navigation/core';
+import { useTranslation } from '@translate/hooks';
 import React, {
   forwardRef,
   useCallback,
   useImperativeHandle,
-  useState
+  useState,
 } from 'react';
 import Modal from 'react-native-modal';
 import { useAuth } from 'src/hooks/UserContext';
@@ -22,6 +23,7 @@ const ModalSelectRetirada: React.ForwardRefRenderFunction<
   IModalSelectRetiradaProps,
   any
 > = (_, ref) => {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState<boolean>(false);
   const navigation = useNavigation();
   const auth = useAuth();
@@ -37,7 +39,7 @@ const ModalSelectRetirada: React.ForwardRefRenderFunction<
   useImperativeHandle(ref, () => {
     return {
       openModal,
-      closeModal
+      closeModal,
     };
   });
 
@@ -64,10 +66,11 @@ const ModalSelectRetirada: React.ForwardRefRenderFunction<
       backdropTransitionOutTiming={600}
       onBackButtonPress={closeModal}
       onBackdropPress={closeModal}
-      shouldRasterizeIOS>
+      shouldRasterizeIOS
+    >
       <Container>
         <Row alignItems="center">
-          <TextBold size={17}>Selecione uma opção</TextBold>
+          <TextBold size={17}>{t('commonSelectOption')}</TextBold>
         </Row>
         {/* <Button
           size="normal"
@@ -84,18 +87,26 @@ const ModalSelectRetirada: React.ForwardRefRenderFunction<
           onPress={() => handleAcompanhar()}>
           Acompanhar retirada
         </Button> */}
-        {auth.user?.permissions.find((f) => f === 'APP:STOCKWITHDRAWAL') ? (
+        {auth.user?.permissions.find(f => f === 'APP:STOCKWITHDRAWAL') ? (
           <Button onPress={handleNova}>
-            <TextRegular size={18} color={Colors.white}>
+            <TextRegular
+              size={18}
+              color={Colors.white}
+              translationKey="withdrawalNew"
+            >
               Nova retirada
             </TextRegular>
           </Button>
         ) : (
           <></>
         )}
-        {auth.user?.permissions.find((f) => f === 'APP:DELIVERYTRACKING') ? (
+        {auth.user?.permissions.find(f => f === 'APP:DELIVERYTRACKING') ? (
           <Button onPress={handleAcompanhar}>
-            <TextRegular size={18} color={Colors.white}>
+            <TextRegular
+              size={18}
+              color={Colors.white}
+              translationKey="withdrawalTrack"
+            >
               Acompanhar retirada
             </TextRegular>
           </Button>

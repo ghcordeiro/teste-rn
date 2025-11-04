@@ -1,6 +1,5 @@
 import Colors from '@colors';
-import { RectButton } from 'react-native-gesture-handler';
-import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import styled from 'styled-components/native';
 
 interface IInputContainerProps {
@@ -48,7 +47,7 @@ export const ContainerButton = styled.View`
   margin-left: 16px;
 `;
 
-export const Icon = styled(AwesomeIcon)`
+export const Icon = styled(FontAwesome)`
   flex: 2;
   margin-right: 8px;
 `;
@@ -64,8 +63,7 @@ export const InputContainer = styled.View<IInputContainerProps>`
   border-color: ${Colors.white};
   flex-direction: row;
   align-items: center;
-  border-color: ${(props) =>
-    // eslint-disable-next-line no-nested-ternary
+  border-color: ${props =>
     props.isFocused && !props.isError
       ? Colors.primary.blue
       : !props.isFocused && props.isError

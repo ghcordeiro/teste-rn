@@ -1,22 +1,7 @@
 import Colors from '@colors';
-import {normalize} from '@size';
-import {getBottomSpace} from '@utils/iPhoneXHelper';
-import {ReactNode} from 'react';
+import { getBottomSpace } from '@utils/iPhoneXHelper';
+import { ReactNode } from 'react';
 import styled from 'styled-components/native';
-
-interface ITextProps {
-  color?: string;
-  size?: number;
-  textAlign?: 'left' | 'right' | 'center';
-  marginBottom?: number;
-  marginLeft?: number;
-  marginTop?: number;
-  marginRight?: number;
-  textDecoration?: 'underline' | 'solid' | 'none';
-  width?: number | string;
-  flex?: number;
-  maxWidth?: number | string;
-}
 
 interface IViewProps {
   marginBottom?: number;
@@ -53,53 +38,12 @@ interface IViewProps {
 //     props.textDecoration ? props.textDecoration : 'none'};
 // `;
 
-export const TextLight = styled.Text<ITextProps>`
-  color: ${props => (props.color ? props.color : Colors.default.text)};
-  font-family: 'Lato-Light';
-  font-size: ${props => normalize(props.size ? props.size : 16)}px;
-  margin-bottom: ${props => (props.marginBottom ? props.marginBottom : 0)}px;
-  margin-top: ${props => (props.marginTop ? props.marginTop : 0)}px;
-  margin-left: ${props => (props.marginLeft ? props.marginLeft : 0)}px;
-  margin-right: ${props => (props.marginRight ? props.marginRight : 0)}px;
-  text-align: ${props => (props.textAlign ? props.textAlign : 'left')};
-  text-decoration: ${props =>
-    props.textDecoration ? props.textDecoration : 'none'};
-  ${props => props.width && `width: ${props.width}`}
-  ${props => props.flex && `flex: ${props.flex}`}
-  ${props => props.maxWidth && `max-width: ${props.maxWidth}px`}
-`;
-
-export const TextBold = styled.Text<ITextProps>`
-  color: ${props => (props.color ? props.color : Colors.default.text)};
-  font-family: 'Lato-Bold';
-  font-size: ${props => normalize(props.size ? props.size : 16)}px;
-  font-weight: bold;
-  margin-bottom: ${props => (props.marginBottom ? props.marginBottom : 0)}px;
-  margin-top: ${props => (props.marginTop ? props.marginTop : 0)}px;
-  margin-left: ${props => (props.marginLeft ? props.marginLeft : 0)}px;
-  margin-right: ${props => (props.marginRight ? props.marginRight : 0)}px;
-  text-align: ${props => (props.textAlign ? props.textAlign : 'left')};
-  text-decoration: ${props =>
-    props.textDecoration ? props.textDecoration : 'none'};
-  ${props => props.width && `width: ${props.width}`}
-  ${props => props.flex && `flex: ${props.flex}`}
-  ${props => props.maxWidth && `max-width: ${props.maxWidth}px`}
-`;
-
-export const TextRegular = styled.Text<ITextProps>`
-  color: ${props => (props.color ? props.color : Colors.default.text)};
-  font-family: 'Lato-Regular';
-  font-size: ${props => normalize(props.size ? props.size : 16)}px;
-  margin-bottom: ${props => (props.marginBottom ? props.marginBottom : 0)}px;
-  margin-top: ${props => (props.marginTop ? props.marginTop : 0)}px;
-  margin-left: ${props => (props.marginLeft ? props.marginLeft : 0)}px;
-  margin-right: ${props => (props.marginRight ? props.marginRight : 0)}px;
-  text-align: ${props => (props.textAlign ? props.textAlign : 'left')};
-  text-decoration: ${props =>
-    props.textDecoration ? props.textDecoration : 'none'};
-  ${props => props.width && `width: ${props.width}`}
-  ${props => props.flex && `flex: ${props.flex}`}
-`;
+// Componentes de texto foram movidos para src/shared/components/
+// Importe de: import { TextRegular, TextBold, TextLight } from 'src/shared';
+// ou mantendo compatibilidade via @globalStyle:
+export { TextBold } from '../shared/components/TextBold';
+export { TextLight } from '../shared/components/TextLight';
+export { TextRegular } from '../shared/components/TextRegular';
 
 export const Row = styled.View<IViewProps>`
   flex-direction: row;
@@ -193,3 +137,6 @@ export const EndFlatListSpacing = styled.View`
   height: 32px;
   width: 100%;
 `;
+
+// Componentes TextRegular, TextBold, TextLight agora têm tradução integrada
+// Os componentes antigos TextRegularT, TextBoldT, TextLightT foram substituídos

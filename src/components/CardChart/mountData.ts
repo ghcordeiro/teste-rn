@@ -17,9 +17,9 @@ export function mountData(data: ICardGraphData) {
                 : darken(0.1, Colors.ecoop.secondary),
             icon:
               data.avgPrice >= data.avgCooperativePrice
-                ? 'trending-up-outline'
-                : 'trending-down-outline',
-            iconSize: 24
+                ? 'level-up'
+                : 'level-down',
+            iconSize: 24,
           },
           {
             value: data.avgAlternativePrice,
@@ -30,11 +30,11 @@ export function mountData(data: ICardGraphData) {
                 : darken(0.1, Colors.ecoop.secondary),
             icon:
               data.avgAlternativePrice >= data.avgCooperativeAlternativePrice
-                ? 'trending-up-outline'
-                : 'trending-down-outline',
-            iconSize: 24
-          }
-        ]
+                ? 'level-up'
+                : 'level-down',
+            iconSize: 24,
+          },
+        ],
       },
       {
         title: 'Cooperativa',
@@ -42,15 +42,15 @@ export function mountData(data: ICardGraphData) {
           {
             value: data.avgCooperativePrice,
             prefix: data.currency,
-            color: darken(0.1, Colors.ecoop.darkGray)
+            color: darken(0.1, Colors.ecoop.darkGray),
           },
           {
             value: data.avgCooperativeAlternativePrice,
             prefix: data.alternativeCurrency,
-            color: darken(0.1, Colors.ecoop.darkGray)
-          }
-        ]
-      }
+            color: darken(0.1, Colors.ecoop.darkGray),
+          },
+        ],
+      },
     ],
     secondLine: [
       {
@@ -63,13 +63,10 @@ export function mountData(data: ICardGraphData) {
               data.efficiency >= 0
                 ? darken(0.1, Colors.ecoop.primary)
                 : darken(0.1, Colors.ecoop.secondary),
-            icon:
-              data.efficiency >= 0
-                ? 'trending-up-outline'
-                : 'trending-down-outline',
-            iconSize: 24
-          }
-        ]
+            icon: data.efficiency >= 0 ? 'level-up' : 'level-down',
+            iconSize: 24,
+          },
+        ],
       },
       {
         title: 'Dolar ($)',
@@ -81,14 +78,11 @@ export function mountData(data: ICardGraphData) {
               data.alternativeEfficiency >= 0
                 ? darken(0.1, Colors.ecoop.primary)
                 : darken(0.1, Colors.ecoop.secondary),
-            icon:
-              data.alternativeEfficiency >= 0
-                ? 'trending-up-outline'
-                : 'trending-down-outline',
-            iconSize: 24
-          }
-        ]
-      }
-    ]
+            icon: data.alternativeEfficiency >= 0 ? 'level-up' : 'level-down',
+            iconSize: 24,
+          },
+        ],
+      },
+    ],
   };
 }

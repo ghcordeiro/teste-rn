@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import CardAttachmentFile, { ICardAttatchmentFileReciveProps } from '@components/CardAttachmentFile';
-import { IMobileNotification } from '@dtos/notification';
-import { INotificationNewsProps } from '@dtos/notification-news';
+import { IMobileNotification } from 'src/features/notifications';
+import { INotificationNewsProps } from 'src/features/notifications';
 import { TextBold, TextRegular } from '@globalStyle';
 import { AxiosResponse } from 'axios';
 import React, {

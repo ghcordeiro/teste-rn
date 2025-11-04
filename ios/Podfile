@@ -4,12 +4,11 @@ require Pod::Executable.execute_command('node', ['-p',
     "react-native/scripts/react_native_pods.rb",
     {paths: [process.argv[1]]},
   )', __dir__]).strip
-
+require 'fileutils'
 
 platform :ios, '16.0'
 prepare_react_native_project!
 
-# Seu bloco 'use_frameworks!' (mantido)
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -20,37 +19,26 @@ end
 target 'ecooperativa' do
   config = use_native_modules!
 
-  # --- Correção do Firebase (mantida) ---
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
   pod 'FirebaseInstallations', :modular_headers => true
-  # --- Fim da Correção do Firebase ---
 
-  # --- CORREÇÃO PARA LIBS (COM PATHS) ---
-  # Bloco 1 (Libs anteriores)
   pod 'RNSVG', :path => '../node_modules/react-native-svg', :modular_headers => true
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient', :modular_headers => true
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons', :modular_headers => true
   pod 'react-native-video', :path => '../node_modules/react-native-video', :modular_headers => true
   pod 'react-native-pdf', :path => '../node_modules/react-native-pdf', :modular_headers => true 
   pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker', :modular_headers => true
-
-  # Bloco 2 (Libs anteriores)
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage', :modular_headers => true
   pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker', :modular_headers => true
   pod 'react-native-biometrics', :path => '../node_modules/react-native-biometrics', :modular_headers => true
   pod 'react-native-blob-util', :path => '../node_modules/react-native-blob-util', :modular_headers => true
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info', :modular_headers => true
   pod 'CodePush', :path => '../node_modules/@revopush/react-native-code-push', :modular_headers => true
-
-  # Yoga também precisa de modular_headers com use_frameworks!
   pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
 
-  # --- Bloco da Nova Arquitetura (essencial para RN 0.82.1) ---
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1'
     ENV['DISABLE_POD_INSTALL_STATS'] = 'true'
     
-    # ... (O bloco longo de 'React-Core', 'React-RCTFabric', etc. continua aqui) ...
     pod 'React-Core', :path => config[:reactNativePath]
     pod 'React-RCTFabric', :path => config[:reactNativePath]
     pod 'React-RCTText', :path => config[:reactNativePath]
@@ -74,7 +62,6 @@ target 'ecooperativa' do
     pod 'React-Image', :path => config[:reactNativePath]
     pod 'Folly', :path => config[:reactNativePath]
   end
-  # --- Fim do Bloco da Nova Arquitetura ---
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -89,7 +76,6 @@ target 'ecooperativa' do
       :mac_catalyst_enabled => false
     )
 
-    # Correção para glog/fmt/hermes (mantida)
     installer.pods_project.targets.each do |target|
       if ['glog', 'fmt', 'React-hermes', 'hermes-engine'].include?(target.name)
         target.build_configurations.each do |config|

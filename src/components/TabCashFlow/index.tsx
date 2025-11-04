@@ -1,11 +1,10 @@
 import Colors from '@colors';
-import CardCashFlow from '@components/CardDetailsCashFlow';
-import { ICashFlowResume } from '@dtos/cash-flow';
+import { CardDetailsCashFlow } from 'src/features/financial';
+import { ICashFlowResume, ICashFlowFilters } from 'src/features/financial';
 import { Flex, Row, TextBold } from '@globalStyle';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Platform, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { ICashFlowFilters } from 'src/pages/CashFlow';
 
 interface ITabCashFlowProps {
   currency: string;
@@ -26,7 +25,7 @@ const TabCashFlow = forwardRef(({ currency, data, filters }: ITabCashFlowProps, 
 
   const renderItem = (item: ICashFlowResume, index: number) => (
     <View style={{ paddingTop: 8 }}>
-      <CardCashFlow 
+      <CardDetailsCashFlow 
         data={item} 
         index={index} 
         filters={filters} // Passando os filtros para o CardCashFlow

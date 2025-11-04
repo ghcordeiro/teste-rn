@@ -8,7 +8,7 @@ import ModalTrackWithdrawal, {
 import { EDeliveryOrderStatus } from '@enum/EDeliveryOrderStatus';
 import convertData from '@utils/convertData';
 import DiffData from '@utils/DiffData';
-import { IDeliveryOrder } from '../../dtos/delivery-order';
+import { IDeliveryOrder } from 'src/features/withdrawals';
 import { Body, BodyGroupText, Container, Header } from './styles';
 
 interface ICardTrackWithdrawal {

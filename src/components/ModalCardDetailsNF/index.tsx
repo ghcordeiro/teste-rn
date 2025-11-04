@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 import Colors from '@colors';
-import Loading from '@components/Loading';
 import { Divider, Row, TextBold, TextLight } from '@globalStyle';
 import { normalize } from '@size';
 import React, {
@@ -8,13 +7,14 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
-  useState
+  useState,
 } from 'react';
 import { View } from 'react-native';
 import Modal from 'react-native-modal';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
-import { IInvoice, IInvoiceItem } from 'src/dtos/contract';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
+import { IInvoice, IInvoiceItem } from 'src/features/contracts';
 import api from 'src/services/api';
+import { Loading } from 'src/shared';
 
 import convertCurrency from '@utils/convertCurrency';
 import convertData from '@utils/convertData';
@@ -47,7 +47,7 @@ const ModalCardDetailsNF: React.ForwardRefRenderFunction<
       setLoading(true);
 
       const response = await api.get(
-        `salescontract/get/${contractId}/invoice/${invoice._id}`
+        `salescontract/get/${contractId}/invoice/${invoice._id}`,
       );
       setData(response.data);
     } catch (e) {
@@ -71,7 +71,7 @@ const ModalCardDetailsNF: React.ForwardRefRenderFunction<
   useImperativeHandle(ref, () => {
     return {
       openModal,
-      closeModal
+      closeModal,
     };
   });
 
@@ -92,10 +92,11 @@ const ModalCardDetailsNF: React.ForwardRefRenderFunction<
       backdropTransitionOutTiming={600}
       onBackButtonPress={() => setVisible(false)}
       onBackdropPress={() => setVisible(false)}
-      shouldRasterizeIOS>
+      shouldRasterizeIOS
+    >
       <ModalContainer>
         <Header>
-          <FAIcon
+          <FontAwesome
             name="truck"
             color={Colors.white}
             size={normalize(18)}
@@ -106,7 +107,8 @@ const ModalCardDetailsNF: React.ForwardRefRenderFunction<
             adjustsFontSizeToFit
             size={18}
             color={Colors.white}
-            marginLeft={8}>
+            marginLeft={8}
+          >
             NF {invoice.invoice}
           </TextLight>
         </Header>
@@ -151,17 +153,17 @@ const ModalCardDetailsNF: React.ForwardRefRenderFunction<
                   </TextBold>
                 </Row>
                 <Row justifyContent="space-between">
-                  <TextLight>Preço</TextLight>
+                  <TextLight translationKey="price" />
                   <TextBold>
                     {convertCurrency(data.price, data.alternativeCurrency)}
                   </TextBold>
                 </Row>
                 <Row justifyContent="space-between">
-                  <TextLight>Valor</TextLight>
+                  <TextLight translationKey="value" />
                   <TextBold>
                     {convertCurrency(
                       data.amount / data.ptax,
-                      data.alternativeCurrency
+                      data.alternativeCurrency,
                     )}
                   </TextBold>
                 </Row>

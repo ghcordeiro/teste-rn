@@ -1,6 +1,6 @@
 import Colors from '@colors';
 import { defaultShadow } from '@globalStyle';
-import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import styled from 'styled-components/native';
 
 interface IIconProps {
@@ -11,7 +11,7 @@ interface IContainerProps {
   bottom?: number;
 }
 
-export const Icon = styled(AwesomeIcon)<IIconProps>`
+export const Icon = styled(FontAwesome)<IIconProps>`
   margin-right: ${(props) => (props.count === 0 ? 0 : 8)}px;
 `;
 

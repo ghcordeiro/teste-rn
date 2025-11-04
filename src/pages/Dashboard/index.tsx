@@ -1,6 +1,6 @@
 import {CommonActions, useNavigation} from '@react-navigation/core';
 import {useTranslation} from '@translate/hooks';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Alert} from 'react-native';
 import Header from 'src/components/Header';
 import {useAuth} from 'src/hooks/UserContext';
@@ -40,7 +40,7 @@ const Dashboard = () => {
   const {nextPage} = useFirebase();
 
   const [onLoadingCrop, setOnLoadingCrop] = useState<boolean>(true);
-  const [_, setLoadingTopVendas] = useState<boolean>(true);
+  const [loadingTopVendas, setLoadingTopVendas] = useState<boolean>(true);
   const [loadingCardGraph, setLoadingCardGraph] = useState<boolean>(true);
   const [loadingSalesPosition, setLoadingSalesPosition] =
     useState<boolean>(true);
@@ -52,6 +52,9 @@ const Dashboard = () => {
     {} as ISalesPosition,
   );
   const [cardGraph, setCardGraph] = useState<ICardGraphData>();
+  
+  // Ref para manter key estável do CardChart e evitar re-renders
+  const cardChartKeyRef = useRef(`card-chart-${Date.now()}`);
 
   useEffect(() => {
     if (nextPage) {
@@ -60,51 +63,49 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const loadTopVendas = async ({crop, culture}: IDashFilterProps) => {
+  const loadTopVendas = useCallback(async ({crop, culture}: IDashFilterProps) => {
     try {
       setLoadingTopVendas(true);
       const response = await api.get(
         `salescontract/topsales/${crop}/${culture}?limit=6`,
       );
       setTopvendas(response.data);
-      setLoadingTopVendas(false);
     } catch (e) {
       console.log(e);
+    } finally {
       setLoadingTopVendas(false);
     }
-  };
+  }, []);
 
-  const loadSalesPosition = async ({crop, culture}: IDashFilterProps) => {
+  const loadSalesPosition = useCallback(async ({crop, culture}: IDashFilterProps) => {
     try {
       setLoadingSalesPosition(true);
       const response = await api.get(
         `salescontract/salesposition/${crop}/${culture}`,
       );
-
       setSalesPosition(response.data);
-      setLoadingSalesPosition(false);
     } catch (e) {
       console.log(e);
+    } finally {
       setLoadingSalesPosition(false);
     }
-  };
+  }, []);
 
-  const loadCardGraph = async ({crop, culture}: IDashFilterProps) => {
+  const loadCardGraph = useCallback(async ({crop, culture}: IDashFilterProps) => {
     try {
       setLoadingCardGraph(true);
       const response = await api.get(
         `salescontract/priceposition/${crop}/${culture}`,
       );
-
       setCardGraph(response.data);
-      setLoadingCardGraph(false);
     } catch (e) {
       console.log(e);
+    } finally {
       setLoadingCardGraph(false);
     }
-  };
+  }, []);
 
-  const handleSelect = async (id: string) => {
+  const handleSelect = useCallback(async (id: string) => {
     if (auth.credentials) {
       try {
         const user = await auth.signIn(auth.credentials, id);
@@ -158,28 +159,51 @@ const Dashboard = () => {
         );
       }
     }
-  };
+  }, [auth, navigation, t]);
 
-  const onRefreshData = async (filter: string) => {
+  const onRefreshData = useCallback(async (filter: string) => {
     if (!filter) {
       return;
     }
-    setCardGraph({} as ICardGraphData);
+    // Limpa dados anteriores durante o carregamento
+    setCardGraph(undefined);
     setSalesPosition({} as ISalesPosition);
     setTopvendas([] as Array<TopVendas>);
+    
     const filtro = {
       crop: filter.split('-')[1],
       culture: filter.split('-')[0],
     };
 
-    await loadTopVendas(filtro);
-    await loadSalesPosition(filtro);
-    await loadCardGraph(filtro);
-  };
+    // Carrega dados em paralelo para melhor performance
+    await Promise.all([
+      loadTopVendas(filtro),
+      loadSalesPosition(filtro),
+      loadCardGraph(filtro),
+    ]);
+  }, [loadTopVendas, loadSalesPosition, loadCardGraph]);
 
-  const handleSetCropCultureFilter = async (cropCulture: string) => {
+  // Ref para armazenar o último filtro aplicado e evitar re-renders infinitos
+  const lastFilterRef = useRef<string | null>(null);
+
+  const handleSetCropCultureFilter = useCallback(async (cropCulture: string) => {
+    // Evita processar o mesmo filtro múltiplas vezes
+    if (lastFilterRef.current === cropCulture) {
+      return;
+    }
+    lastFilterRef.current = cropCulture;
     await onRefreshData(cropCulture);
-  };
+  }, [onRefreshData]);
+
+  // Memoiza a lista de producers para evitar re-renders desnecessários
+  const producersList = useMemo(() => {
+    return auth.user?.producers || [];
+  }, [auth.user?.producers]);
+
+  // Memoiza o callback de loading para evitar re-renders no FilterCropCulture
+  const handleLoadingChange = useCallback((loading: boolean) => {
+    setOnLoadingCrop(loading);
+  }, []);
 
   return (
     <>
@@ -188,7 +212,7 @@ const Dashboard = () => {
         <Flex marginBottom={16}>
           <FilterCropCulture
             onActionChange={handleSetCropCultureFilter}
-            onLoading={setOnLoadingCrop}
+            onLoading={handleLoadingChange}
             allCropCulture={false}
           />
         </Flex>
@@ -199,16 +223,16 @@ const Dashboard = () => {
             <BarChartVerticalWithLabels data={topVendas} />
             <ContainerCards>
               <CardChart
-                key={String(Math.random())}
+                key={cardChartKeyRef.current}
                 data={cardGraph}
                 loading={loadingCardGraph}
               />
             </ContainerCards>
             <StyledView marginTop={24} marginBottom={36}>
-              {auth.user?.producers.map(r => (
+              {producersList.map(r => (
                 <ButtonSelect
                   onPress={() => handleSelect(r.id)}
-                  key={String(Math.random())}>
+                  key={r.id}>
                   <TextBold color={Colors.default.text}>{r.name}</TextBold>
                 </ButtonSelect>
               ))}

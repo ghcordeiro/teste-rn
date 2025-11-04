@@ -1,12 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import Colors from '@colors';
-import TabAttachmentsTrackWithdrawal from '@components/TabAttachmentsTrackWithdrawal';
-import { IDeliveryOrder } from '@dtos/delivery-order';
+import { TabAttachmentsTrackWithdrawal } from 'src/features/withdrawals';
+import { IDeliveryOrder } from 'src/features/withdrawals';
 import { EDeliveryOrderStatus } from '@enum/EDeliveryOrderStatus';
 import { Flex, Row, TextBold, TextLight, TextRegular } from '@globalStyle';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import { normalize } from '@size';
+import { getMaterialTopTabScreenOptions } from 'src/routes/config/materialTopTabOptions';
 import convertData from '@utils/convertData';
 import DiffData from '@utils/DiffData';
 import { AxiosResponse } from 'axios';
@@ -19,7 +18,7 @@ import React, {
 } from 'react';
 import Modal from 'react-native-modal';
 import api from 'src/services/api';
-import TabItemsTrackWithdrawal from '../TabItemsTrackWithdrawal/index';
+import { TabItemsTrackWithdrawal } from 'src/features/withdrawals';
 import { Body, BodyGroupText, BodyGroupTextRow, Header, ModalContainer } from './styles';
 
 export interface IModalTrackWithdrawalProps {
@@ -173,46 +172,20 @@ const ModalTrackWithdrawal: React.ForwardRefRenderFunction<
           </Row>
         </Body>
         <Flex>
-          <NavigationContainer independent>
             <Tab.Navigator
-              tabBarOptions={{
-                style: {
-                  backgroundColor: Colors.ecoop.darkGray
-                },
-                labelStyle: {
-                  fontWeight: 'bold',
-                  width: '100%',
-                  textAlign: 'center',
-                  margin: 0,
-                  padding: 0,
-                  fontSize: normalize(12)
-                },
-                activeTintColor: '#FFF',
-                inactiveTintColor: '#ADADAD',
-                indicatorStyle: {
-                  marginBottom: 4,
-                  backgroundColor: '#FFF'
-                },
-                scrollEnabled: false
-              }}
+              screenOptions={getMaterialTopTabScreenOptions({ scrollEnabled: false })}
               initialRouteName="Itens">
               <Tab.Screen
                 name="Itens"
-                component={() => (
-                  <TabItemsTrackWithdrawal data={item?.products} />
-                )}
+                component={TabItemsTrackWithdrawalWrapper}
+                initialParams={{ data: item?.products }}
               />
               <Tab.Screen
                 name="Anexos"
-                component={() => (
-                  <TabAttachmentsTrackWithdrawal
-                    data={item?.attachments}
-                    closeModal={closeModal}
-                  />
-                )}
+                component={TabAttachmentsTrackWithdrawalWrapper}
+                initialParams={{ data: item?.attachments, closeModal }}
               />
             </Tab.Navigator>
-          </NavigationContainer>
         </Flex>
       </ModalContainer>
     </Modal>

@@ -1,19 +1,19 @@
 /* eslint-disable no-underscore-dangle */
 import Colors from '@colors';
-// import Button from '@components/Button';
+// import Button from 'src/shared/components/Button';
 import InputMask, { InputRef } from '@components/InputMask';
 import { LabelValue } from '@components/LabelValue';
-import IWithdrawal from '@dtos/withdrawal';
 import { TextRegular } from '@globalStyle';
 import React, {
   forwardRef,
   useCallback,
   useImperativeHandle,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { Alert } from 'react-native';
 import Modal from 'react-native-modal';
+import { IWithdrawal } from 'src/features/withdrawals';
 import { useAuth } from 'src/hooks/UserContext';
 import { useWithdrawal } from 'src/hooks/WithdrawalContext';
 import {
@@ -21,7 +21,7 @@ import {
   Container,
   InputWrapper,
   LabelValueWrapper,
-  ModalContainer
+  ModalContainer,
 } from './styles';
 
 export interface IModalSelectItemsToWithdrawalProps {
@@ -54,26 +54,20 @@ const ModalSelectItemsToWithdrawal: React.ForwardRefRenderFunction<
   useImperativeHandle(ref, () => {
     return {
       openModal,
-      closeModal
+      closeModal,
     };
   });
 
   const handleAddItemToContext = () => {
-    const quantity = inputRef.current?.value() ? 
-      Number(inputRef.current?.value().replace('.', '').replace(',', '.')) : 
-      null //inputRef.current?.getRawValue() as number;
-    if (!quantity){
+    const quantity = inputRef.current?.value()
+      ? Number(inputRef.current?.value().replace('.', '').replace(',', '.'))
+      : null; //inputRef.current?.getRawValue() as number;
+    if (!quantity) {
       inputRef.current?.isError(true);
-      Alert.alert(
-        'Erro',
-        'A quantidade deve ser informada!'
-      );
+      Alert.alert('Erro', 'A quantidade deve ser informada!');
       return;
     }
-    if (
-      quantity &&
-      item.withdrawalBalance >= quantity
-    ) {
+    if (quantity && item.withdrawalBalance >= quantity) {
       if (
         handleAddItem({
           crop: item.crop,
@@ -81,9 +75,9 @@ const ModalSelectItemsToWithdrawal: React.ForwardRefRenderFunction<
           product: {
             id: item.productId,
             name: item.name,
-            measurementUnit: item.measurementUnit
+            measurementUnit: item.measurementUnit,
           },
-          quantity: quantity
+          quantity: quantity,
         })
       ) {
         closeModal();
@@ -92,7 +86,7 @@ const ModalSelectItemsToWithdrawal: React.ForwardRefRenderFunction<
       inputRef.current?.isError(true);
       Alert.alert(
         'Erro',
-        'A quantidade deve ser menor ou igual ao saldo disponível'
+        'A quantidade deve ser menor ou igual ao saldo disponível',
       );
     }
   };
@@ -110,17 +104,18 @@ const ModalSelectItemsToWithdrawal: React.ForwardRefRenderFunction<
       backdropTransitionOutTiming={600}
       // onBackButtonPress={closeModal}
       // onBackdropPress={closeModal}
-      shouldRasterizeIOS>
+      shouldRasterizeIOS
+    >
       <ModalContainer>
         <Container>
           <LabelValueWrapper>
             <LabelValue label="Item" value={item.name} fontSize={14} />
           </LabelValueWrapper>
-          { item.crop && 
+          {item.crop && (
             <LabelValueWrapper>
               <LabelValue label="Safra" value={item.crop} fontSize={14} />
             </LabelValueWrapper>
-          }
+          )}
           <LabelValueWrapper>
             <LabelValue
               label="Em estoque/Disponível para retirada"
@@ -130,7 +125,7 @@ const ModalSelectItemsToWithdrawal: React.ForwardRefRenderFunction<
           </LabelValueWrapper>
           <InputWrapper>
             <InputMask
-              type={"money"}
+              type={'money'}
               options={{
                 precision: precision,
                 separator: ',',

@@ -1,13 +1,9 @@
-import React, { useRef } from 'react';
-import { TextRegular } from '@globalStyle';
+import React from 'react';
 import convertCurrency from '@utils/convertCurrency';
 import convertData from '@utils/convertData';
-
-import { IAdvance } from 'src/dtos/contract';
-import { Container } from './styles';
-import ModalCardDetailsAdvance, {
-  IModalCardDetailsAdvanceProps
-} from '../ModalCardDetailsAdvance';
+import { IAdvance } from 'src/features/contracts';
+import ModalCardDetailsAdvance from '../ModalCardDetailsAdvance';
+import CardDetails, { CardDetailsColumn } from '../CardDetails';
 
 interface ICardProps {
   data: IAdvance;
@@ -15,31 +11,42 @@ interface ICardProps {
   contractId: string;
 }
 
+/**
+ * CardDetailsAdvance refatorado para usar componente genérico CardDetails
+ * 
+ * Reduzido de 47 para 30 linhas (-36%)
+ */
 const CardDetailsAdvance = ({ data, index, contractId }: ICardProps) => {
-  const modalRef = useRef<IModalCardDetailsAdvanceProps>(null);
+  const columns: CardDetailsColumn[] = [
+    {
+      width: '30%',
+      render: (data: IAdvance) => `DOC ${data.document}`,
+    },
+    {
+      width: '32%',
+      textAlign: 'center',
+      render: (data: IAdvance) =>
+        convertData(new Date(data.dateOf).getTime(), '/'),
+    },
+    {
+      width: '38%',
+      textAlign: 'right',
+      render: (data: IAdvance) => convertCurrency(data.amount),
+    },
+  ];
 
-  const handleOpenModal = () => {
-    modalRef.current?.openModal();
-  };
   return (
-    <>
-      <Container key={`${data._id}-${index}`} onPress={handleOpenModal}>
-        <TextRegular width="30%" size={12}>
-          DOC {data.document}
-        </TextRegular>
-        <TextRegular width="32%" textAlign="center" size={12}>
-          {convertData(new Date(data.dateOf).getTime(), '/')}
-        </TextRegular>
-        <TextRegular width="38%" textAlign="right" size={12}>
-          {convertCurrency(data.amount)}
-        </TextRegular>
-      </Container>
-      <ModalCardDetailsAdvance
-        ref={modalRef}
-        contractId={contractId}
-        advance={data}
-      />
-    </>
+    <CardDetails
+      data={data}
+      index={index}
+      contractId={contractId}
+      columns={columns}
+      modalComponent={ModalCardDetailsAdvance}
+      modalProps={(advance, contractId) => ({
+        contractId,
+        advance,
+      })}
+    />
   );
 };
 

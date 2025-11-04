@@ -4,7 +4,7 @@ import Colors from '@colors';
 import { defaultShadow } from '@globalStyle';
 import { normalize } from '@size';
 import { darken } from 'polished';
-import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 
 interface ContainerProps {
   isFocused: boolean;
@@ -64,7 +64,7 @@ export const InputText = styled.TextInput<TextInputProps>`
   border-right-color: ${Colors.ecoop.gray}; */
 `;
 
-export const Icon = styled(AwesomeIcon)`
+export const Icon = styled(FontAwesome)`
   flex: 1;
   margin-right: 8px;
   margin-left: 12px;

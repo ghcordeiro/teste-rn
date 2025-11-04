@@ -1,12 +1,13 @@
+import { useTranslation } from '@translate/hooks';
 import React from 'react';
 import Modal from 'react-native-modal';
+import Button from 'src/shared/components/Button';
 import {
-  ModalContainer,
-  ModalTitle,
   InputContainer,
   ModalButtonContainer,
+  ModalContainer,
+  ModalTitle,
 } from './styles';
-import Button from '@components/Button';
 
 interface ModalFinalizeWithdrawalProps {
   isVisible: boolean;
@@ -21,6 +22,8 @@ export function ModalFinalizeWithdrawal({
   onConfirm,
   children,
 }: ModalFinalizeWithdrawalProps) {
+  const { t } = useTranslation();
+
   return (
     <Modal
       isVisible={isVisible}
@@ -34,9 +37,10 @@ export function ModalFinalizeWithdrawal({
       backdropTransitionOutTiming={600}
       onBackButtonPress={onClose}
       onBackdropPress={onClose}
-      shouldRasterizeIOS>
+      shouldRasterizeIOS
+    >
       <ModalContainer>
-        <ModalTitle>Finalizar Retirada</ModalTitle>
+        <ModalTitle>{t('withdrawalEnd')}</ModalTitle>
         <InputContainer>{children}</InputContainer>
         <ModalButtonContainer>
           <Button
@@ -44,11 +48,12 @@ export function ModalFinalizeWithdrawal({
             loading={false}
             size="small"
             onPress={onClose}
-            style={{marginRight: 10}}>
-            back
+            style={{ marginRight: 10 }}
+          >
+            commonBack
           </Button>
           <Button size="small" loading={false} onPress={onConfirm}>
-            confirm
+            commonConfirm
           </Button>
         </ModalButtonContainer>
       </ModalContainer>

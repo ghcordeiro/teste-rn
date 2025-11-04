@@ -1,9 +1,9 @@
 import { TextRegular } from '@globalStyle';
 import { downloadFile } from '@utils/downloadFileToStorage';
 import React from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import api from 'src/services/api';
-import { IAttachmentDeliveryOrder } from '../../../../dtos/delivery-order';
+import { IAttachmentDeliveryOrder } from 'src/features/withdrawals';
 import { Container } from './styles';
 
 interface ICardAttachmentProps {
@@ -28,7 +28,7 @@ const CardAttachmentWithdrawal = ({
 
   return (
     <Container onPress={handleDownload}>
-      <Icon name="file-pdf-o" size={25} style={{ color: '#ADADAD' }} />
+      <FontAwesome name="file-pdf-o" size={25} style={{ color: '#ADADAD' }} />
       <TextRegular color="#3D3D3D" marginLeft={8}>
         {data.fileName}
       </TextRegular>

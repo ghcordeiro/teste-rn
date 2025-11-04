@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextRegular } from '@globalStyle';
 
-import { INote } from 'src/dtos/contract';
+import { INote } from 'src/features/contracts';
 import { Container } from './styles';
 
 interface ICardProps {

@@ -778,20 +778,78 @@ const [optimisticItems, addOptimisticItem] = useOptimistic(
 ### Fase 2: Componentes Reutilizáveis (2-3 semanas)
 
 1. ✅ Unificar CardDetails*
+   - ✅ Criado componente genérico `CardDetails` com configuração flexível
+   - ✅ Refatorados CardDetailsNF, CardDetailsPayment, CardDetailsAdvance
+   - ✅ Redução de ~145 linhas para ~70 linhas reutilizáveis (-52%)
 2. ✅ Criar BaseFilterModal (ou hooks incrementais)
-3. ✅ Mesclar componentes Card similares
-4. ✅ Testes de componentes
+   - ✅ Criado hook `useDateFilter` para lógica de filtros de data
+   - ✅ Criado hook `useSelectFilter` para lógica de filtros de seleção
+   - ✅ Refatorados FilterPeriod, FilterContract, FilterCropCulture, FilterProducerPermission
+   - ✅ Corrigido problema de re-renders infinitos no Dashboard
+3. ⚠️ Mesclar componentes Card similares
+   - ⚠️ Análise concluída - CardContract vs CardHomeContract têm layouts diferentes
+   - ⚠️ CardFinancialMoviment vs CardFinancialStatement têm tipos de dados diferentes
+   - ⚠️ Deferido - impacto médio, pode ser feito posteriormente
+4. ⚠️ Testes de componentes
+   - ⚠️ Pendente - testes unitários recomendados para novos hooks e componentes
 
 ### Fase 3: Otimizações e Cleanup (1-2 semanas)
 
 1. ✅ Atualizar APIs deprecadas
+   - ✅ Substituído `tabBarOptions` por `screenOptions` em 4 arquivos
+   - ✅ Removido `NavigationContainer independent` (já corrigido anteriormente)
 2. ✅ Otimizar Context Providers
+   - ✅ Aplicado React.memo em AppProviderContext.tsx para reduzir re-renders
+   - ✅ Documentação adicionada sobre o impacto esperado (~15-20% menos re-renders)
+   - ✅ Otimização mantém estrutura de providers aninhados (sem breaking changes)
 3. ✅ Performance improvements
+   - ✅ Corrigido `Math.random()` em keys em 16 arquivos (substituído por IDs estáveis)
+   - ✅ Melhorias de performance através de keys estáveis reduzem re-renders desnecessários
 4. ✅ Documentação
+   - ✅ Criado README.md em src/features/ explicando a estrutura feature-based
+   - ✅ Documentação das melhorias implementadas integrada ao relatório
 
 ### Fase 4: Arquitetura (Opcional - 4-6 semanas)
 
-1. ⚠️ Migração para feature-based (se necessário escalar time)
+1. ✅ Migração para feature-based (iniciada)
+   - ✅ Estrutura base criada em `src/features/`
+   - ✅ Feature `contracts` migrada como exemplo:
+     - ✅ Componentes: CardContract, CardHomeContract, TabContract*
+     - ✅ Pages: Contracts, ContractDetails
+     - ✅ Types: contract.ts, resumoContract.ts
+     - ✅ Exports centralizados em `src/features/contracts/index.ts`
+     - ✅ Imports atualizados em `tabRoutes.tsx`
+   - ✅ Feature `financial` migrada:
+     - ✅ Componentes: CardFinancialMoviment, CardFinancialStatement, CardHomeMoviment, TabCashFlow
+     - ✅ Pages: FinancialMoviment, FinancialStatement, CashFlow
+     - ✅ Types: financialMoviment.ts, financialStatement.ts, cash-flow.ts
+     - ✅ Imports atualizados em `tabRoutes.tsx` e `Home`
+   - ✅ Feature `logistics` migrada:
+     - ✅ Componentes: CardLogistics, CardDetailsLogistics, TabLogisticsBoarding, TabLogisticsDetails
+     - ✅ Pages: Logistics, LogisticsDetails
+     - ✅ Types: logistics.ts
+     - ✅ Imports atualizados em `tabRoutes.tsx`
+   - ✅ Feature `withdrawals` migrada:
+     - ✅ Componentes: CardWithdrawal*, TabItemsTrackWithdrawal, TabAttachmentsTrackWithdrawal
+     - ✅ Pages: NewWithdrawal, TrackWithdrawal, WithdrawalCart
+     - ✅ Types: withdrawal.ts, delivery-order.ts, ISaveWithdrawalDto.ts
+     - ✅ Imports atualizados em `tabRoutes.tsx`
+   - ✅ Feature `notifications` migrada:
+     - ✅ Componentes: CardNotification
+     - ✅ Pages: Notificacoes, PageNotificationAssayResult, PageNotificationNews, PageNotificationNotification, PageNotificationWithdrawal
+     - ✅ Types: notification.ts, notification-news.ts
+     - ✅ Imports atualizados em `tabRoutes.tsx`
+   - ✅ Feature `stock` migrada:
+     - ✅ Componentes: CardStock, ModalCardStock
+     - ✅ Pages: Stock
+     - ✅ Types: stock.ts, resumoStock.ts
+     - ✅ Imports atualizados em `tabRoutes.tsx`
+   - ✅ **Migração feature-based concluída!** Todas as 6 features principais foram migradas
+   - ✅ Feature `shared` criada:
+     - ✅ Componentes compartilhados: Header, Loading, Button, ProgressBar, Select, FloatingButton
+     - ✅ Hooks compartilhados: useDateFilter, useSelectFilter
+     - ✅ Exports centralizados em `src/features/shared/index.ts`
+     - ✅ Todos os imports atualizados nas features e componentes de filtros
 2. ⚠️ Implementar state management global (se necessário)
 3. ⚠️ Code splitting
 

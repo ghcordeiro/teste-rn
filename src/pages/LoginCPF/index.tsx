@@ -1,5 +1,4 @@
 import Colors from '@colors';
-import Button from '@components/Button';
 import InputMask, { InputRef } from '@components/InputMask';
 import { Version } from '@components/Version';
 import { CenteredFlex } from '@globalStyle';
@@ -11,6 +10,7 @@ import { Platform, SafeAreaView, View } from 'react-native';
 import { useBiometris } from 'src/hooks/BiometricsContext';
 import { useServer } from 'src/hooks/ServerContext';
 import { User, useAuth } from 'src/hooks/UserContext';
+import Button from 'src/shared/components/Button';
 import Toast from 'src/utils/toast';
 import ECoop from '../../assets/images/ECoop/e-coop_logo-01.svg';
 import { Container, Scroll } from './styles';
@@ -39,7 +39,6 @@ const LoginCPF = () => {
   const [failedAttempts, setFailedAttempts] = useState(0);
 
   const newLogin = async () => {
-    console.log('== > newLogin => ');
     await loginWithPassword();
     setLogin(undefined);
     inputRef.current?.setValue(undefined);
@@ -48,7 +47,6 @@ const LoginCPF = () => {
   };
 
   const loginWithPassword = useCallback(async () => {
-    console.log('== > loginWithPassword => ');
     await auth.signOut();
     setUser(undefined);
     inputRef.current?.isError(false);
@@ -57,10 +55,11 @@ const LoginCPF = () => {
 
   const textButonLogin = (): string => {
     if (user && failedAttempts <= 2 && isAvailable) {
-      const biometryKey = biometryType === 'FaceID' ? 'FaceID' : 'Biometria';
-      return t(biometryKey);
+      const biometryKey =
+        biometryType === 'FaceID' ? 'authFaceId' : 'authBiometry';
+      return biometryKey;
     } else {
-      return 'next';
+      return 'commonNext';
     }
   };
 
@@ -79,16 +78,14 @@ const LoginCPF = () => {
   }, [isAvailable, loginWithPassword, params, user]);
 
   const loginPassword = async () => {
-    console.log('== > loginPassword => ');
     if (!inputRef?.current?.isValid()) {
       return;
     }
     const fullLogin = inputRef.current?.value();
-    console.log('== > loginPassword => fullLogin => ', fullLogin);
     if (!fullLogin) {
       inputRef.current?.isError(true);
       //Alert.alert('CPF não informado');
-      Toast.show(t('login_not_provided'));
+      Toast.show(t('authLoginNotProvided'));
       return;
     }
     const cpfMask = fullLogin.replaceAll('.', '').replace('-', '');
@@ -114,20 +111,18 @@ const LoginCPF = () => {
     );
   };
   const loginBiometrics = async () => {
-    console.log('== > loginBiometrics => ');
     try {
       const success = await authenticate();
       if (success) {
         // Verificar se temos credenciais salvas para fazer o login
         if (!auth.credentials?.login || !auth.credentials?.password) {
           console.error('Credenciais não encontradas');
-          Toast.show(t('credentials_not_found'));
+          Toast.show(t('authCredentialsNotFound'));
           setFailedAttempts(prev => prev + 1);
           return;
         }
 
         // Fazer login com as credenciais salvas
-        console.log('== > loginBiometrics => signIn => ');
         const loggedUser = await auth.signIn(
           {
             login: auth.credentials.login,
@@ -138,7 +133,6 @@ const LoginCPF = () => {
 
         // Verificar se o login foi bem-sucedido
         if (loggedUser && loggedUser.token) {
-          console.log('== > loginBiometrics => login success => ');
           setUser(undefined);
           setFailedAttempts(0);
           navigation.dispatch(
@@ -149,9 +143,6 @@ const LoginCPF = () => {
           );
         } else {
           // Se não tem token, precisa ir para a tela de senha
-          console.log(
-            '== > loginBiometrics => no token, going to password => ',
-          );
           const cpfMask = user?.user?.login?.replace(/[.-]/g, '') || '';
           if (cpfMask) {
             await server.getConfigServer(cpfMask);
@@ -173,15 +164,15 @@ const LoginCPF = () => {
       } else {
         setFailedAttempts(prev => prev + 1);
         if (failedAttempts < 2) {
-          Toast.show(t('auth_failed_try_again'));
+          Toast.show(t('authFailedTryAgain'));
         } else if (failedAttempts === 2) {
-          Toast.show(t('auth_failed_use_password'));
+          Toast.show(t('authFailedUsePassword'));
         }
       }
     } catch (error) {
       console.error('Erro no login biométrico:', error);
       setFailedAttempts(prev => prev + 1);
-      Toast.show(t('auth_failed_try_again'));
+      Toast.show(t('authFailedTryAgain'));
     }
   };
   const handleSubmit = async () => {
@@ -197,7 +188,7 @@ const LoginCPF = () => {
       }
     } catch (error) {
       // Alert.alert('Erro inesperado. Por favor, tente novamente.');
-      Toast.show(t('unexpected_error_try_again'));
+      Toast.show(t('errorUnexpected'));
       console.error('Erro ao fazer login:', error);
     } finally {
       setLoadingSearch(false);
@@ -229,7 +220,7 @@ const LoginCPF = () => {
               ref={inputRef}
               icon="id-card"
               type="cpf"
-              placeholder={t('cpf')}
+              placeholder={t('authCpf')}
               savedValue={login}
               isEnable={!user?.user?.login}
             />
@@ -242,7 +233,7 @@ const LoginCPF = () => {
             </Button>
             {user && (
               <Button size="normal" loading={loadingSearch} onPress={newLogin}>
-                change_user
+                authChangeUser
               </Button>
             )}
           </View>

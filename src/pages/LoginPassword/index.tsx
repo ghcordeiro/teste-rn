@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import Colors from '@colors';
-import Button from '@components/Button';
 import InputMask, { InputRef } from '@components/InputMask';
 import Select from '@components/Select';
 import { Version } from '@components/Version';
@@ -13,6 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, Platform, SafeAreaView, View } from 'react-native';
 import { useServer } from 'src/hooks/ServerContext';
 import { useAuth } from 'src/hooks/UserContext';
+import Button from 'src/shared/components/Button';
 import Toast from 'src/utils/toast';
 import ECoop from '../../assets/images/ECoop/e-coop_logo-01.svg';
 import { Container, Scroll } from './styles';
@@ -29,8 +29,10 @@ const LoginPassword = () => {
   const route: IRouteProps = useRoute();
   const auth = useAuth();
   const cpfRef = useRef<InputRef>(null);
-  const { serversConfig, envServer, configApiServer} = useServer();
-  const [loginServer, setLoginServer] = useState<IServerConfig|undefined>(envServer);
+  const { serversConfig, envServer, configApiServer } = useServer();
+  const [loginServer, setLoginServer] = useState<IServerConfig | undefined>(
+    envServer,
+  );
   const passwordRef = useRef<InputRef>(null);
 
   const [CPF] = useState<string>(route.params?.cpf || '');
@@ -38,12 +40,11 @@ const LoginPassword = () => {
   const [loadingSearch, setLoadingSearch] = useState(false);
 
   useEffect(() => {
-    if (!serversConfig || serversConfig.length === 0){
+    if (!serversConfig || serversConfig.length === 0) {
       setLoginServer(undefined);
-    } else if(!loginServer) {
+    } else if (!loginServer) {
       setLoginServer(serversConfig[0]);
     }
-
   }, [serversConfig]);
 
   const handleSubmit = async () => {
@@ -54,26 +55,26 @@ const LoginPassword = () => {
       if (!fullLogin) {
         cpfRef.current?.isError(true);
         //Alert.alert('CPF não informado!');
-        Toast.show(t('login_not_provided'));
+        Toast.show(t('authLoginNotProvided'));
         return;
       }
       const cpfMask = fullLogin.replaceAll('.', '').replace('-', '');
-      if (!cpfMask || cpfMask.length !== 11){
+      if (!cpfMask || cpfMask.length !== 11) {
         cpfRef.current?.isError(true);
         return;
       }
       if (!password) {
         passwordRef.current?.isError(true);
         //Alert.alert('Senha não informada!');
-        Toast.show(t('password_not_provided'));
+        Toast.show(t('authPasswordNotProvided'));
         return;
       }
-      if (!loginServer && serversConfig && serversConfig.length > 1){
+      if (!loginServer && serversConfig && serversConfig.length > 1) {
         //Alert.alert('Selecione a Cooperativa!');
-        Toast.show(t('env_not_provided'));
+        Toast.show(t('authCooperativeNotProvided'));
         return;
       }
-      if (!loginServer){
+      if (!loginServer) {
         throw 'Invalid credentials';
       }
       await configApiServer(loginServer);
@@ -82,35 +83,30 @@ const LoginPassword = () => {
         password,
       });
       if (user?.user?.newPassword) {
-        Alert.alert(
-          'Para continuar, é necessário definir uma nova senha',
-          '',
-          [
-            {
-              onPress: () =>
-                navigation.dispatch(
-                  CommonActions.reset({
-                    index: 1,
-                    routes: [{ name: 'ChangePassword' }],
-                  })
-                ),
-              text: t('confirm'),
-            },
-          ]
-        );
+        Alert.alert(t('authNewPasswordRequired'), '', [
+          {
+            onPress: () =>
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 1,
+                  routes: [{ name: 'ChangePassword' }],
+                }),
+              ),
+            text: t('commonConfirm'),
+          },
+        ]);
       } else {
         navigation.dispatch(
           CommonActions.reset({
             index: 1,
             routes: [{ name: 'Dashboard' }],
-          })
+          }),
         );
       }
     } catch (error) {
-
       console.log('Erro ao fazer login com senha:', error);
       if (error === 'Invalid credentials') {
-        Toast.show(t('status401'));
+        Toast.show(t('errorUnauthorized'));
       }
       passwordRef.current?.isError(true);
       setLoadingSearch(false);
@@ -124,7 +120,7 @@ const LoginPassword = () => {
       CommonActions.reset({
         index: 1,
         routes: [{ name: 'LoginCPF' }],
-      })
+      }),
     );
   };
 
@@ -133,11 +129,13 @@ const LoginPassword = () => {
       <SafeAreaView style={{ backgroundColor: Colors.ecoop.darkGray }} />
       <Container
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        enabled>
+        enabled
+      >
         <Scroll
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
+          contentContainerStyle={{ flex: 1, justifyContent: 'center' }}
+        >
           <CenteredFlex>
             <ECoop
               width={width - width / 4}
@@ -151,7 +149,7 @@ const LoginPassword = () => {
               ref={cpfRef}
               icon="id-card"
               type="cpf"
-              placeholder={t('cpf')}
+              placeholder={t('authCpf')}
               isEnable={false}
               savedValue={CPF}
             />
@@ -160,7 +158,7 @@ const LoginPassword = () => {
               ref={passwordRef}
               icon="key"
               type="password"
-              placeholder={t('password')}
+              placeholder={t('authPassword')}
               isEnable
               savedValue={PW}
             />
@@ -178,12 +176,16 @@ const LoginPassword = () => {
                 }}
               />
             )}
-            <Button size="normal" loading={loadingSearch} onPress={handleSubmit}>
-              login
+            <Button
+              size="normal"
+              loading={loadingSearch}
+              onPress={handleSubmit}
+            >
+              authLogin
             </Button>
 
             <Button size="normal" loading={loadingSearch} onPress={handleBack}>
-              back
+              commonBack
             </Button>
           </View>
         </Scroll>

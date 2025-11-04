@@ -1,7 +1,7 @@
 import { IAttachmentProps } from '@dtos/attachment';
 import { TextRegular } from '@globalStyle';
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 import VideoPlayer, { ReciveProps as VideoProps } from 'src/pages/VideoPlayer';
 import { Container } from './styles';
 
@@ -40,7 +40,7 @@ const CardAttachmentVideo: React.ForwardRefRenderFunction<
           onLoadVideo(true);
           refVideo.current?.renderPlayer()
         }}>
-        <Icon name="file-video-o" size={25} style={{ color: '#ADADAD' }} />
+        <FontAwesome name="file-video-o" size={25} style={{ color: '#ADADAD' }} />
         <TextRegular color="#3D3D3D" marginLeft={8}>
           {data.videoName}
         </TextRegular>
