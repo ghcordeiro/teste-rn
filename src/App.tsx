@@ -1,6 +1,9 @@
 // ⚠️ IMPORTANTE: react-native-gesture-handler DEVE ser importado PRIMEIRO
 import 'react-native-gesture-handler';
 
+// Importa e inicializa i18n primeiro
+import '@translate';
+
 import { firebase } from '@react-native-firebase/messaging';
 import codePush, { CodePushOptions } from '@revopush/react-native-code-push';
 import { translate } from '@translate';
@@ -10,7 +13,9 @@ import Routes from './routes';
 
 const App = () => <Routes />;
 
-const codePushOptions: CodePushOptions = {
+// Função para obter as opções do CodePush com traduções
+// Garante que o i18n está inicializado antes de usar translate
+const getCodePushOptions = (): CodePushOptions => ({
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
   installMode: codePush.InstallMode.IMMEDIATE,
   mandatoryInstallMode: codePush.InstallMode.IMMEDIATE,
@@ -21,7 +26,9 @@ const codePushOptions: CodePushOptions = {
     optionalIgnoreButtonLabel: 'Ignorar',
     optionalInstallButtonLabel: 'Instalar',
   },
-};
+});
+
+const codePushOptions = getCodePushOptions();
 
 // Firebase Messaging: Configuração com tratamento de erros
 // Em desenvolvimento iOS, o APNS token pode não estar disponível

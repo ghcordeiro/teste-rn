@@ -3,8 +3,8 @@
  * Exporta todas as funções e tipos necessários
  */
 
-// Core
-export {
+// Importa core primeiro para garantir inicialização
+import {
   getLocale,
   getTranslations,
   hasTranslation,
@@ -13,6 +13,17 @@ export {
   setLocale,
   translate,
 } from './core';
+
+// Exporta todas as funções
+export {
+  getLocale,
+  getTranslations,
+  hasTranslation,
+  i18n,
+  initializeI18n,
+  setLocale,
+  translate,
+};
 
 // Utils
 export { detectDeviceLocale, normalizeLocale } from './utils/localeDetector';
@@ -29,5 +40,4 @@ export type {
 export { AVAILABLE_LOCALES, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './config';
 
 // Compatibilidade: exporta translate como default para compatibilidade com imports antigos
-import { translate } from './core';
 export default translate;

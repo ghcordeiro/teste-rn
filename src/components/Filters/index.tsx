@@ -1,7 +1,7 @@
 import EFinancialMovementStatus from '@enum/EFinancialMovementStatus';
 import EFinancialStatementOperation from '@enum/EFinancialStatementOperation';
 import { TextBold } from '@globalStyle';
-import { translate } from '@translate';
+import { useTranslation } from '@translate/hooks';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import FilterPeriod from './FilterPeriod';
@@ -38,6 +38,7 @@ interface IFilters {
 }
 
 const Filters = ({ handleFilter, filters }: IFilters) => {
+  const { t } = useTranslation();
   const [arraysFilter, setArraysFilter] = useState<IArraysFilterProps>({
     period: [],
     situation: []
@@ -87,7 +88,7 @@ const Filters = ({ handleFilter, filters }: IFilters) => {
       {filters.period?.show && (
         <>
           {filters.period.label && (
-            <TextBold size={12}>{translate('period')}</TextBold>
+            <TextBold size={12}>{t('period')}</TextBold>
           )}
           <FilterPeriod onHandleFilters={onHandleFilterPeriod} />
         </>
@@ -96,7 +97,7 @@ const Filters = ({ handleFilter, filters }: IFilters) => {
       {filters.situation?.show && (
         <>
           {filters.situation.label && (
-            <TextBold size={12}>{translate('situation')}</TextBold>
+            <TextBold size={12}>{t('situation')}</TextBold>
           )}
           <FilterSituation onHandleFilters={onHandleFilterSituation} />
         </>

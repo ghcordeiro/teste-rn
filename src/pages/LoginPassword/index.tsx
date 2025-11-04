@@ -8,7 +8,7 @@ import { IServerConfig } from '@dtos/server';
 import { CenteredFlex } from '@globalStyle';
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/core';
 import { width } from '@size';
-import { translate } from '@translate';
+import { useTranslation } from '@translate/hooks';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Platform, SafeAreaView, View } from 'react-native';
 import { useServer } from 'src/hooks/ServerContext';
@@ -24,6 +24,7 @@ interface IRouteProps {
 }
 
 const LoginPassword = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route: IRouteProps = useRoute();
   const auth = useAuth();
@@ -53,7 +54,7 @@ const LoginPassword = () => {
       if (!fullLogin) {
         cpfRef.current?.isError(true);
         //Alert.alert('CPF não informado!');
-        Toast.show(translate('login_not_provided'));
+        Toast.show(t('login_not_provided'));
         return;
       }
       const cpfMask = fullLogin.replaceAll('.', '').replace('-', '');
@@ -64,12 +65,12 @@ const LoginPassword = () => {
       if (!password) {
         passwordRef.current?.isError(true);
         //Alert.alert('Senha não informada!');
-        Toast.show(translate('password_not_provided'));
+        Toast.show(t('password_not_provided'));
         return;
       }
       if (!loginServer && serversConfig && serversConfig.length > 1){
         //Alert.alert('Selecione a Cooperativa!');
-        Toast.show(translate('env_not_provided'));
+        Toast.show(t('env_not_provided'));
         return;
       }
       if (!loginServer){
@@ -93,7 +94,7 @@ const LoginPassword = () => {
                     routes: [{ name: 'ChangePassword' }],
                   })
                 ),
-              text: translate('confirm'),
+              text: t('confirm'),
             },
           ]
         );
@@ -109,7 +110,7 @@ const LoginPassword = () => {
 
       console.log('Erro ao fazer login com senha:', error);
       if (error === 'Invalid credentials') {
-        Toast.show(translate('status401'));
+        Toast.show(t('status401'));
       }
       passwordRef.current?.isError(true);
       setLoadingSearch(false);
@@ -150,7 +151,7 @@ const LoginPassword = () => {
               ref={cpfRef}
               icon="id-card"
               type="cpf"
-              placeholder={translate('cpf')}
+              placeholder={t('cpf')}
               isEnable={false}
               savedValue={CPF}
             />
@@ -159,7 +160,7 @@ const LoginPassword = () => {
               ref={passwordRef}
               icon="key"
               type="password"
-              placeholder={translate('password')}
+              placeholder={t('password')}
               isEnable
               savedValue={PW}
             />

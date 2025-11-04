@@ -7,7 +7,7 @@ import ModalSelectRetirada, {
   IModalSelectRetiradaProps,
 } from '@components/ModalSelectRetirada';
 import {useNavigation} from '@react-navigation/core';
-import {translate} from '@translate';
+import {useTranslation} from '@translate/hooks';
 import Button from 'src/components/Button';
 import {IFinancialStatementProps} from 'src/dtos/financialStatement';
 import {useFirebase} from 'src/hooks/FirebaseContext';
@@ -17,6 +17,7 @@ import {navigate} from '../../services/navigation';
 import {Container, ContainerButtonDash, Space} from './styles';
 
 const Home = () => {
+  const { t } = useTranslation();
   const auth = useAuth();
   const {nextPage} = useFirebase();
   const navigation = useNavigation();
@@ -61,7 +62,7 @@ const Home = () => {
             loading={false}
             onPress={() => navigate('Dashboard')}
             icon="bar-chart">
-            {translate('Dashboard')}
+            {t('Dashboard')}
           </Button>
         </ContainerButtonDash>
         {auth.user?.permissions.find(
@@ -72,7 +73,7 @@ const Home = () => {
               loading={false}
               onPress={handleOpenModal}
               icon="shopping-cart">
-              {translate('Retiradas')}
+              {t('Retiradas')}
             </Button>
           </ContainerButtonDash>
         ) : (
@@ -82,7 +83,7 @@ const Home = () => {
           <CardHomeMoviment
             route="FinancialStatement"
             data={dataMovto}
-            title={translate('lastMovimentations')}
+            title={t('lastMovimentations')}
           />
         ) : (
           <></>

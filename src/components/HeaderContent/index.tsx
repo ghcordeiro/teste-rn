@@ -5,7 +5,7 @@ import CardHeader from '@components/CardHeader';
 import { Flex, Row, TextBold, TextRegular } from '@globalStyle';
 import { CommonActions, useNavigation } from '@react-navigation/core';
 import { height, normalize, normalizeHeight } from '@size';
-import { translate } from '@translate';
+import { useTranslation } from '@translate/hooks';
 import convertCurrency from '@utils/convertCurrency';
 import { Alert, ScrollView, View } from 'react-native';
 import { useAuth } from 'src/hooks/UserContext';
@@ -16,6 +16,7 @@ interface IHeaderContentProps {
 }
 
 const HeaderContent = ({balance}: IHeaderContentProps) => {
+  const { t } = useTranslation();
   const mt = normalizeHeight(8);
   const auth = useAuth();
   const navigation = useNavigation();
@@ -30,12 +31,12 @@ const HeaderContent = ({balance}: IHeaderContentProps) => {
   };
 
   const handleChangeUser = () => {
-    Alert.alert(translate('changeUser'), undefined, [
+    Alert.alert(t('changeUser'), undefined, [
       {
-        text: translate('cancel'),
+        text: t('cancel'),
       },
       {
-        text: translate('confirm'),
+        text: t('confirm'),
         onPress: changeUser,
       },
     ]);
@@ -83,7 +84,7 @@ const HeaderContent = ({balance}: IHeaderContentProps) => {
               </ButtonChangeUser>
               <Row marginTop={normalize(10)}>
                 <TextRegular color={Colors.white}>
-                  {translate('accountBalance')}
+                  {t('accountBalance')}
                 </TextRegular>
               </Row>
               <Row>

@@ -5,7 +5,7 @@ import {
   DrawerContentComponentProps,
   DrawerItem,
 } from '@react-navigation/drawer';
-import { translate } from '@translate';
+import { useTranslation } from '@translate/hooks';
 import React from 'react';
 import { Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -19,6 +19,7 @@ import {
 } from './styles';
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
+  const { t } = useTranslation();
   const { signOut } = useAuth();
   const { clearServers } = useServer();
 
@@ -109,7 +110,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
           icon={({ size }) => (
             <Icon name="user" color={Colors.white} size={size} />
           )}
-          label={`${translate('ChangePassword')}`}
+          label={`${t('ChangePassword')}`}
           onPress={() => {
             props.navigation.navigate('ChangePassword', {
               firstLogin: false,
@@ -123,19 +124,19 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
           icon={({ size }) => (
             <IconMaterial name="logout" color={Colors.white} size={size} />
           )}
-          label={`${translate('logout')}`}
+          label={`${t('logout')}`}
           onPress={() => {
             Alert.alert(
-              translate('logout'),
-              translate('confirmLogout'),
+              t('logout'),
+              t('confirmLogout'),
               [
                 {
-                  text: translate('cancel'),
+                  text: t('cancel'),
                   onPress: () => null,
                   style: 'cancel',
                 },
                 {
-                  text: translate('logout'),
+                  text: t('logout'),
                   onPress: async () => {
                     await signOut();
                     await clearServers();

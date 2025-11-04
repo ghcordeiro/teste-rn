@@ -1,6 +1,6 @@
 import Colors from '@colors';
 import { TextBold, TextRegular } from '@globalStyle';
-import { translate } from '@translate';
+import { useTranslation } from '@translate/hooks';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getBottomSpace } from '@utils/iPhoneXHelper';
@@ -36,6 +36,7 @@ function Select({
   name,
   onActionChange = () => {}
 }: ISelectProps) {
+  const { t } = useTranslation();
   const listRef = useRef(null);
   const [selectItem, setSelectItem] = useState<any>({});
   const [dataPicker, setDataPicker] = useState<any[]>([]);
@@ -75,7 +76,7 @@ function Select({
             onChange(item);
           }}>
           <TextRegular key={`${name}@${index.toString()}`}>
-            {translate(item[propertyLabel], {
+            {t(item[propertyLabel], {
               defaultValue: item[propertyLabel]
             })}
           </TextRegular>
@@ -92,7 +93,7 @@ function Select({
       <Container>
         <Touch onPress={() => setModalVisible(true)}>
           <TextRegular>
-            {translate(
+            {t(
               selectItem ? selectItem[propertyLabel] : 'Selecione uma Opção!',
               {
                 defaultValue: selectItem

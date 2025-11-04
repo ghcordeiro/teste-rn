@@ -1,4 +1,4 @@
-import { getLanguageByDevice } from '@translate';
+import { getLocale } from '@translate';
 
 // Mapeamento de Moedas
 const Moeda = {
@@ -10,15 +10,15 @@ const Moeda = {
 const formatLargeNumbers = (value: number) => {
   const absValue = Math.abs(value);
   if (absValue >= 1_000_000_000) {
-    return {value: value / 1_000_000_000, label: 'bi'};
+    return { value: value / 1_000_000_000, label: 'bi' };
   }
   if (absValue >= 1_000_000) {
-    return {value: value / 1_000_000, label: 'mi'};
+    return { value: value / 1_000_000, label: 'mi' };
   }
   if (absValue >= 1_000) {
-    return {value: value / 1_000, label: 'mil'};
+    return { value: value / 1_000, label: 'mil' };
   }
-  return {value, label: ''};
+  return { value, label: '' };
 };
 
 // Função para formatar moeda
@@ -34,7 +34,7 @@ const formatCurrency = (
 
   // Abreviação de valores
   if (abbreviate) {
-    const {value: formattedValue, label} = formatLargeNumbers(value);
+    const { value: formattedValue, label } = formatLargeNumbers(value);
     return `${prefix || ''} ${formattedValue
       .toFixed(2)
       .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')
@@ -43,13 +43,10 @@ const formatCurrency = (
 
   // Formatação de moeda com ou sem prefixo
   const currency = Moeda[prefix || 'R$'] || 'BRL';
-  const formattedValue = new Intl.NumberFormat(
-    getLanguageByDevice().replace('_', '-'),
-    {
-      style: 'currency',
-      currency,
-    },
-  ).format(value);
+  const formattedValue = new Intl.NumberFormat(getLocale().replace('_', '-'), {
+    style: 'currency',
+    currency,
+  }).format(value);
 
   if (!exibePrefix) {
     return formattedValue.replace(/^(-?)[^\d]+/, '$1'); // Remove o prefixo

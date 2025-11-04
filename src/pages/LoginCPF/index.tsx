@@ -60,7 +60,7 @@ const LoginCPF = () => {
       const biometryKey = biometryType === 'FaceID' ? 'FaceID' : 'Biometria';
       return t(biometryKey);
     } else {
-      return t('next');
+      return 'next';
     }
   };
 
@@ -242,7 +242,7 @@ const LoginCPF = () => {
             </Button>
             {user && (
               <Button size="normal" loading={loadingSearch} onPress={newLogin}>
-                {t('change_user')}
+                change_user
               </Button>
             )}
           </View>

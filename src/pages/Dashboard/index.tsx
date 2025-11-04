@@ -1,5 +1,5 @@
 import {CommonActions, useNavigation} from '@react-navigation/core';
-import {translate} from '@translate';
+import {useTranslation} from '@translate/hooks';
 import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import Header from 'src/components/Header';
@@ -34,6 +34,7 @@ interface IDashFilterProps {
 }
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const auth = useAuth();
   const {nextPage} = useFirebase();
@@ -127,7 +128,7 @@ const Dashboard = () => {
                         ],
                       }),
                     ),
-                  text: translate('confirm'),
+                  text: t('confirm'),
                 },
               ],
             );

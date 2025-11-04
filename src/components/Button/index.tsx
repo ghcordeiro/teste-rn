@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { TextRegular } from '@globalStyle';
 import { buttonSize } from '@size';
-import { translate } from '@translate';
+import { useTranslation } from '@translate/hooks';
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import { RectButtonProperties } from 'react-native-gesture-handler';
@@ -28,34 +28,38 @@ const Button: React.FC<ButtonProps> = ({
   type = 'normal',
   icon,
   ...rest
-}) => (
-  <>
-    <Container size={size} type={type} {...rest}>
-      <ContainerIconText>
-        {icon && (
-          <Icon
-            name={icon}
-            size={20}
-            color={type === 'outline' ? Colors.ecoop.primary : Colors.white}
-          />
-        )}
-        <TextRegular
-          size={buttonSize[size || 'normal']?.font || 18}
-          color={type === 'normal' ? Colors.white : Colors.ecoop.primary}>
-          {translate(children)}
-        </TextRegular>
-      </ContainerIconText>
-      {loading ? (
-        <ContainerIndicator {...rest}>
-          <ActivityIndicator
-            collapsable={false}
-            size="large"
-            color={type === 'normal' ? Colors.white : Colors.ecoop.primary}
-          />
-        </ContainerIndicator>
-      ) : null}
-    </Container>
-  </>
-);
+}) => {
+  const { t } = useTranslation();
+  
+  return (
+    <>
+      <Container size={size} type={type} {...rest}>
+        <ContainerIconText>
+          {icon && (
+            <Icon
+              name={icon}
+              size={20}
+              color={type === 'outline' ? Colors.ecoop.primary : Colors.white}
+            />
+          )}
+          <TextRegular
+            size={buttonSize[size || 'normal']?.font || 18}
+            color={type === 'normal' ? Colors.white : Colors.ecoop.primary}>
+            {t(children)}
+          </TextRegular>
+        </ContainerIconText>
+        {loading ? (
+          <ContainerIndicator {...rest}>
+            <ActivityIndicator
+              collapsable={false}
+              size="large"
+              color={type === 'normal' ? Colors.white : Colors.ecoop.primary}
+            />
+          </ContainerIndicator>
+        ) : null}
+      </Container>
+    </>
+  );
+};
 
 export default Button;

@@ -1,5 +1,5 @@
 import { Picker } from '@react-native-picker/picker';
-import { translate } from '@translate';
+import { useTranslation } from '@translate/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { Container } from './styles';
 
@@ -22,6 +22,7 @@ const SimplePicker = ({
   name,
   onActionChange = () => {}
 }: IPropsSimplePicker) => {
+  const { t } = useTranslation();
   const pickerRef = useRef(null);
   const [valueSelect, setValueSelect] = useState('');
   const [dataPicker, setDataPicker] = useState<any[]>([]);
@@ -66,7 +67,7 @@ const SimplePicker = ({
         {dataPicker.map((d: any) => {
           return (
             <Picker.Item
-              label={translate(d[propertyLabel], {
+              label={t(d[propertyLabel], {
                 defaultValue: d[propertyLabel]
               })}
               value={d[propertyValue]}

@@ -3,10 +3,10 @@
  * Instância singleton com configuração e métodos principais
  */
 
-import {I18n as I18nClass} from 'i18n-js';
-import {Locale, Translations, TranslateOptions, I18nConfig} from './types';
-import {DEFAULT_LOCALE, translations} from './config';
-import {detectDeviceLocale} from './utils/localeDetector';
+import { I18n as I18nClass } from 'i18n-js';
+import { DEFAULT_LOCALE, translations } from './config';
+import { I18nConfig, Locale, TranslateOptions, Translations } from './types';
+import { detectDeviceLocale } from './utils/localeDetector';
 
 /**
  * Configuração do i18n
@@ -31,7 +31,10 @@ export const initializeI18n = (): void => {
 
   if (__DEV__) {
     console.log('[i18n] Initialized with locale:', i18n.locale);
-    console.log('[i18n] Available locales:', Object.keys(i18n.translations || {}));
+    console.log(
+      '[i18n] Available locales:',
+      Object.keys(i18n.translations || {}),
+    );
   }
 };
 
@@ -40,7 +43,9 @@ export const initializeI18n = (): void => {
  */
 export const setLocale = (locale: Locale): void => {
   if (!i18n.translations[locale]) {
-    console.warn(`[i18n] Locale "${locale}" not found, using default: ${DEFAULT_LOCALE}`);
+    console.warn(
+      `[i18n] Locale "${locale}" not found, using default: ${DEFAULT_LOCALE}`,
+    );
     i18n.locale = DEFAULT_LOCALE;
     return;
   }
@@ -60,7 +65,9 @@ export const getLocale = (): Locale => {
  */
 export const hasTranslation = (key: string, locale?: Locale): boolean => {
   const targetLocale = locale || getLocale();
-  const translations = i18n.translations[targetLocale] as Translations | undefined;
+  const translations = i18n.translations[targetLocale] as
+    | Translations
+    | undefined;
   return translations ? key in translations : false;
 };
 
@@ -75,7 +82,10 @@ export const getTranslations = (locale?: Locale): Translations | undefined => {
 /**
  * Traduz uma chave com fallback seguro
  */
-export const translate = (key: string, options: TranslateOptions = {}): string => {
+export const translate = (
+  key: string,
+  options: TranslateOptions = {},
+): string => {
   if (!i18n) {
     console.warn(`[i18n] I18n not available, returning key: ${key}`);
     return options.defaultValue || key;
@@ -93,9 +103,15 @@ export const translate = (key: string, options: TranslateOptions = {}): string =
     });
 
     // Detecta mensagens de erro do i18n-js
-    if (typeof translation === 'string' && translation.includes('[missing') && translation.includes('translation]')) {
+    if (
+      typeof translation === 'string' &&
+      translation.includes('[missing') &&
+      translation.includes('translation]')
+    ) {
       if (__DEV__) {
-        console.warn(`[i18n] Missing translation for key "${key}" in locale "${i18n.locale}"`);
+        console.warn(
+          `[i18n] Missing translation for key "${key}" in locale "${i18n.locale}"`,
+        );
       }
       return options.defaultValue || key;
     }
@@ -111,4 +127,3 @@ export const translate = (key: string, options: TranslateOptions = {}): string =
 
 // Inicializa automaticamente
 initializeI18n();
-
