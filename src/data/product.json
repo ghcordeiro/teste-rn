@@ -1,0 +1,23 @@
+[
+  {
+    "productId": "1",
+    "description": "Citromax 1L",
+    "activePrinciple": "Glifozato",
+    "quantity": 120,
+    "measurementUnit": "LT"
+  },
+  {
+    "productId": "2",
+    "description": "Hidromel 1L",
+    "activePrinciple": "Alcool",
+    "quantity": 80,
+    "measurementUnit": "LT"
+  },
+  {
+    "productId": "3",
+    "description": "Alvejante",
+    "activePrinciple": "Soda",
+    "quantity": 10,
+    "measurementUnit": "LT"
+  }
+]

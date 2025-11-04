@@ -1,0 +1,143 @@
+/* eslint-disable react/require-default-props */
+import { Row, TextBold, TextRegular } from '@globalStyle';
+import convertAfterDot from '@utils/convertAfterDot';
+import convertCurrency from '@utils/convertCurrency';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { ICardGraphData, ICardGraphProps } from 'src/dtos/graphics';
+import Loading from '../Loading';
+import { mountData } from './mountData';
+
+import { Container, Section } from './styles';
+
+interface ICardCharProps {
+  data?: ICardGraphData;
+  loading: boolean;
+}
+
+interface IProps {
+  firstLine: Array<ICardGraphProps>;
+  secondLine: Array<ICardGraphProps>;
+}
+
+const CardChart = ({ data, loading }: ICardCharProps) => {
+  const [cData, setCData] = useState<IProps>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (data) {
+      const response = mountData(data);
+      setCData(response);
+    }
+  }, [data, loading]);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [cData]);
+
+  const renderFirstLine = () => {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        {cData?.firstLine.map((d, index) => (
+          <>
+            <Container key={String(Math.random())}>
+              <Section>
+                <TextRegular size={12}>{d.title}</TextRegular>
+              </Section>
+              <View
+                style={{
+                  flex: 3,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                {d.values.map((v) => {
+                  return (
+                    <Row key={String(Math.random())} alignItems="center" justifyContent="center">
+                      <TextBold marginRight={4} size={18} color={v.color}>
+                        {v?.prefix?.includes('%')
+                          ? `${convertAfterDot(v.value, 2)} ${v.prefix}`
+                          : `${convertCurrency(v.value, v.prefix)}`}
+                      </TextBold>
+                      {v.icon && (
+                        <Icon
+                          name={v.icon}
+                          size={v.iconSize || 28}
+                          color={v.color}
+                        />
+                      )}
+                    </Row>
+                  );
+                })}
+              </View>
+            </Container>
+            {cData.firstLine.length > 1 && index === 0 && (
+              <View style={{ height: 2, width: 32 }} />
+            )}
+          </>
+        ))}
+      </View>
+    );
+  };
+
+  const renderSecondLine = () => {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        {cData?.secondLine.map((d, index) => (
+          <>
+            <Container key={String(Math.random())}>
+              <Section>
+                <TextRegular size={12}>{d.title}</TextRegular>
+              </Section>
+              <View
+                style={{
+                  flex: 3,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                {d.values.map((v) => {
+                  return (
+                    <Row key={String(Math.random())} alignItems="center" justifyContent="center">
+                      <TextBold marginRight={4} size={18} color={v.color}>
+                        {v.prefix.includes('%')
+                          ? `${convertAfterDot(v.value, 2)} ${v.prefix}`
+                          : `${convertCurrency(v.value, v.prefix)}`}
+                      </TextBold>
+                      {v.icon && (
+                        <Icon
+                          name={v.icon}
+                          size={v.iconSize || 28}
+                          color={v.color}
+                        />
+                      )}
+                    </Row>
+                  );
+                })}
+              </View>
+            </Container>
+            {cData.secondLine.length > 1 && index === 0 && (
+              <View style={{ height: 2, width: 32 }} />
+            )}
+          </>
+        ))}
+      </View>
+    );
+  };
+
+  return (
+    <>
+      {isLoading && cData ? (
+        <Loading />
+      ) : (
+        <View style={{ flexDirection: 'column' }}>
+          <View style={{ flexDirection: 'column' }}>{renderFirstLine()}</View>
+          <View style={{ flexDirection: 'column', marginTop: 16 }}>
+            {renderSecondLine()}
+          </View>
+        </View>
+      )}
+    </>
+  );
+};
+
+export default CardChart;

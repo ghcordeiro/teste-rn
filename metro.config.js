@@ -4,7 +4,7 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 // Obtenha a configuração padrão primeiro para acessar seu resolver
 const defaultConfig = getDefaultConfig(__dirname);
 const {
-  resolver: { sourceExts },
+  resolver: { sourceExts, assetExts },
 } = defaultConfig;
 // --- Fim da Adição ---
 
@@ -15,12 +15,22 @@ const {
  * @type {import('@react-native/metro-config').MetroConfig}
  */
 const config = {
-  // --- Adicionado ---
-  // Adicione 'cjs' à lista de extensões de arquivo que o Metro reconhece
-  resolver: {
-    sourceExts: [...sourceExts, 'cjs'],
+  transformer: {
+    // Configuração para transformar SVGs usando react-native-svg-transformer
+    babelTransformerPath: require.resolve('react-native-svg-transformer'),
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: true,
+      },
+    }),
   },
-  // --- Fim da Adição ---
+  resolver: {
+    // Adicione 'cjs' à lista de extensões de arquivo que o Metro reconhece
+    sourceExts: [...sourceExts, 'cjs', 'svg'],
+    // Remove 'svg' de assetExts para que seja processado pelo transformer
+    assetExts: assetExts.filter(ext => ext !== 'svg'),
+  },
 };
 
 // Modificado para usar a 'defaultConfig' que definimos acima

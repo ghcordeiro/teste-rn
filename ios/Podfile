@@ -5,17 +5,11 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-# --- INÍCIO DA CORREÇÃO DO FLIPPER ---
-# Adiciona a importação do Flipper que estava faltando
-# require_relative '../node_modules/react-native/scripts/flipper'
-# flipper_config = ENV['FLIPPER_DISABLE'] == '1' ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
-# --- FIM DA CORREÇÃO DO FLIPPER ---
 
-# Plataforma que você especificou
-platform :ios, '15.1'
+platform :ios, '16.0'
 prepare_react_native_project!
 
-# Seu bloco 'use_frameworks!' (mantido, pois é necessário para o Firebase)
+# Seu bloco 'use_frameworks!' (mantido)
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -26,21 +20,37 @@ end
 target 'ecooperativa' do
   config = use_native_modules!
 
-  # Adiciona a configuração do use_flipper!
-  # use_flipper!(flipper_config)
-
-  # --- Suas correções para o use_frameworks! (mantidas) ---
-  # Isso corrige o erro do FirebaseCoreInternal vs GoogleUtilities
+  # --- Correção do Firebase (mantida) ---
   pod 'GoogleUtilities', :modular_headers => true
-  # Yoga precisa de modular_headers com use_frameworks!
-  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
-  # --- Fim das suas correções ---
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true
+  # --- Fim da Correção do Firebase ---
 
-  # --- INÍCIO DO BLOCO DA NOVA ARQUITETURA ---
-  # Este bloco é ESSENCIAL para o React Native 0.82.1
+  # --- CORREÇÃO PARA LIBS (COM PATHS) ---
+  # Bloco 1 (Libs anteriores)
+  pod 'RNSVG', :path => '../node_modules/react-native-svg', :modular_headers => true
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient', :modular_headers => true
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons', :modular_headers => true
+  pod 'react-native-video', :path => '../node_modules/react-native-video', :modular_headers => true
+  pod 'react-native-pdf', :path => '../node_modules/react-native-pdf', :modular_headers => true 
+  pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker', :modular_headers => true
+
+  # Bloco 2 (Libs anteriores)
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage', :modular_headers => true
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker', :modular_headers => true
+  pod 'react-native-biometrics', :path => '../node_modules/react-native-biometrics', :modular_headers => true
+  pod 'react-native-blob-util', :path => '../node_modules/react-native-blob-util', :modular_headers => true
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info', :modular_headers => true
+  pod 'CodePush', :path => '../node_modules/@revopush/react-native-code-push', :modular_headers => true
+
+  # Yoga também precisa de modular_headers com use_frameworks!
+  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
+
+  # --- Bloco da Nova Arquitetura (essencial para RN 0.82.1) ---
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1'
     ENV['DISABLE_POD_INSTALL_STATS'] = 'true'
-
+    
+    # ... (O bloco longo de 'React-Core', 'React-RCTFabric', etc. continua aqui) ...
     pod 'React-Core', :path => config[:reactNativePath]
     pod 'React-RCTFabric', :path => config[:reactNativePath]
     pod 'React-RCTText', :path => config[:reactNativePath]
@@ -64,32 +74,23 @@ target 'ecooperativa' do
     pod 'React-Image', :path => config[:reactNativePath]
     pod 'Folly', :path => config[:reactNativePath]
   end
-  # --- FIM DO BLOCO DA NOVA ARQUITETURA ---
+  # --- Fim do Bloco da Nova Arquitetura ---
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # Caminho absoluto para a raiz da sua aplicação.
     :app_path => "#{Pod::Config.instance.installation_root}/..",
-    # Configuração do Hermes (padrão para New Arch)
     :hermes_enabled => true
   )
 
   post_install do |installer|
-    # # Adiciona o post_install do Flipper
-    # flipper_post_install(installer) if flipper_config == FlipperConfiguration.enabled
-
-    # Hook padrão do React Native
     react_native_post_install(
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
 
-    # --- Sua correção para glog/fmt (mesclada e melhorada) ---
-    # Força os headers modulares para as dependências C++ do React
-    # que conflitam com 'use_frameworks!'
+    # Correção para glog/fmt/hermes (mantida)
     installer.pods_project.targets.each do |target|
-      # Adicionei hermes e React-hermes, que também são C++ e podem falhar
       if ['glog', 'fmt', 'React-hermes', 'hermes-engine'].include?(target.name)
         target.build_configurations.each do |config|
           config.build_settings['DEFINES_MODULE'] = 'YES'
@@ -97,6 +98,5 @@ target 'ecooperativa' do
         end
       end
     end
-    # --- Fim da sua correção ---
   end
 end
